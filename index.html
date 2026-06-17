@@ -3,39 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- ═══════════ GOOGLE VERIFICATION ═══════════ -->
     <meta name="google-site-verification" content="n1f6tSDcpaYasNa6vxfP_yLB6TEuorzY-Uxix-iEAEk" />
-    
-    <!-- ═══════════ SEO META TAGS ═══════════ -->
-    <meta name="description" content="Ashiq Hussain — Python Developer & CS Student. 3 Projects, 5 Certificates. AI, Cybersecurity enthusiast. Multilingual goal.">
-    <meta name="keywords" content="Ashiq Hussain, Python Developer, CS Student, Portfolio, Pakistan, AI, Cybersecurity, Tkinter, GitHub">
+    <meta name="description" content="Ashiq Hussain — Python Developer & CS Student. 3 Projects, 5 Certificates. AI, Cybersecurity enthusiast.">
+    <meta name="keywords" content="Ashiq Hussain, Python Developer, CS Student, Portfolio, Pakistan, AI, Cybersecurity">
     <meta name="author" content="Ashiq Hussain">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://ashiqhussain-97.github.io/portfolio/">
-    
-    <!-- ═══════════ OPEN GRAPH ═══════════ -->
     <meta property="og:title" content="Ashiq Hussain — Python Developer Portfolio">
-    <meta property="og:description" content="Python Developer | AI & Cybersecurity | 200+ Hours Coded | 3 Projects | 5 Certificates">
+    <meta property="og:description" content="Python Developer | AI & Cybersecurity | 200+ Hours Coded">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ashiqhussain-97.github.io/portfolio/">
-    
     <title>Ashiq Hussain | Python Developer & CS Student</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23020810'/><text x='50' y='68' text-anchor='middle' font-size='50' font-weight='bold' fill='%2300d4ff' font-family='Arial'>AH</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #020810; --panel: rgba(10,18,40,0.7); --panel-hover: rgba(15,25,50,0.85);
-            --cyan: #00d4ff; --green: #00ff88; --purple: #7c3aed; --orange: #ff6b00;
-            --text: #e2e8f0; --text-bright: #f0f4ff; --muted: #94a3b8;
-            --border: rgba(0,212,255,0.15); --border-bright: rgba(0,212,255,0.3);
-            --white: #f8fafc; --font: 'Inter', system-ui, sans-serif;
-            --mono: 'JetBrains Mono', monospace; --radius: 16px;
-        }
+        :root{--bg:#020810;--panel:rgba(10,18,40,0.7);--panel-hover:rgba(15,25,50,0.85);--cyan:#00d4ff;--green:#00ff88;--purple:#7c3aed;--orange:#ff6b00;--text:#e2e8f0;--text-bright:#f0f4ff;--muted:#94a3b8;--border:rgba(0,212,255,0.15);--border-bright:rgba(0,212,255,0.3);--white:#f8fafc;--font:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;--radius:16px}
         *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
         body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased;cursor:none}
         ::selection{background:var(--cyan);color:var(--bg)}
-
         #cursor{width:22px;height:22px;border:2px solid var(--cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:99999;transition:transform .1s,width .2s,height .2s,border-color .2s;box-shadow:0 0 20px rgba(0,212,255,.5)}
         #cursor-dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:99999}
         #cursor.hover{width:50px;height:50px;border-color:var(--green);box-shadow:0 0 35px rgba(0,255,136,.6)}
@@ -43,10 +28,8 @@
         @keyframes trailFade{0%{opacity:.7;transform:scale(1)}100%{opacity:0;transform:scale(0)}}
         .click-particle{position:fixed;pointer-events:none;z-index:99997;width:6px;height:6px;background:var(--cyan);border-radius:50%;animation:clickBurst .8s ease-out forwards;box-shadow:0 0 8px var(--cyan)}
         @keyframes clickBurst{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}}
-
         #galaxy-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
         #scroll-progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--green));z-index:10001}
-
         .nav{position:fixed;top:0;width:100%;background:rgba(2,8,16,.88);backdrop-filter:blur(25px);border-bottom:1px solid var(--border);z-index:1000;padding:14px 0;transition:all .3s}
         .nav.scrolled{padding:10px 0;background:rgba(2,8,16,.95)}
         .container{max-width:1050px;margin:0 auto;padding:0 24px}
@@ -58,7 +41,6 @@
         .nav-cta{background:var(--cyan)!important;color:var(--bg)!important;font-weight:600!important;padding:8px 16px!important}
         .nav-cta:hover{background:var(--white)!important;color:var(--bg)!important}
         .nav-toggle{display:none;background:none;border:none;color:var(--cyan);font-size:1.6em;cursor:pointer}
-
         .hero{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding:100px 0 60px}
         .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
         .hero-content{max-width:550px}
@@ -84,7 +66,6 @@
         .btn-green:hover{background:#00cc6a;transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,255,136,.3)}
         .btn-outline{background:transparent;color:var(--white);border:1.5px solid var(--border-bright)}
         .btn-outline:hover{border-color:var(--cyan);transform:translateY(-2px);background:rgba(0,212,255,.06)}
-
         .hero-visual{display:flex;justify-content:center;align-items:center;position:relative;width:380px;height:380px}
         .magnetar{position:absolute;inset:20px;animation:floatMagnetar 6s ease-in-out infinite}
         @keyframes floatMagnetar{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
@@ -110,7 +91,6 @@
         .mag-particle:nth-child(13){animation-duration:3s;animation-delay:1s}
         .mag-particle:nth-child(14){animation-duration:2.4s;animation-delay:1.4s}
         @keyframes particleOut{0%{transform:translate(-50%,-50%) scale(1);opacity:.8}100%{transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(0);opacity:0}}
-
         .section{padding:80px 0;position:relative;z-index:1}
         .section-divider{position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none;z-index:2}
         .section-header{text-align:center;margin-bottom:48px}
@@ -119,7 +99,6 @@
         .section-subtitle{color:var(--muted);font-size:1em;max-width:500px;margin:8px auto 0}
         .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
         .reveal.visible{opacity:1;transform:translateY(0)}
-
         .card{background:var(--panel);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .35s;position:relative;overflow:hidden;transform-style:preserve-3d}
         .card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.05) 0%,transparent 60%);opacity:0;transition:opacity .35s}
         .card:hover::before{opacity:1}
@@ -129,13 +108,11 @@
         .card a{color:var(--cyan);text-decoration:none;font-weight:500}
         .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
         .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px}
-
         .project-img{width:100%;height:180px;border-radius:10px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;font-size:1.4em;font-weight:700;border:1px solid var(--border)}
         .tags{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
         .tag{background:rgba(0,212,255,.08);color:var(--cyan);padding:4px 10px;border-radius:12px;font-size:.73em;border:1px solid rgba(0,212,255,.15)}
         .project-link{font-size:.82em;color:var(--cyan);text-decoration:none;padding:6px 14px;border:1px solid rgba(0,212,255,.25);border-radius:18px;display:inline-block;margin-top:10px;transition:all .2s}
         .project-link:hover{background:rgba(0,212,255,.1);border-color:var(--cyan)}
-
         .skill-bar-row{margin-bottom:14px}
         .skill-bar-info{display:flex;justify-content:space-between;margin-bottom:5px}
         .skill-bar-name{font-weight:600;color:var(--white);font-size:.88em}
@@ -143,36 +120,30 @@
         .skill-bar-track{width:100%;height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
         .skill-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width 1.5s ease;width:0}
         .skill-bar-fill.animated{width:var(--w)}
-
         .timeline{position:relative;padding-left:28px;margin:16px 0}
         .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--border)}
         .timeline-item{margin-bottom:18px;position:relative}
         .timeline-item::before{content:'';position:absolute;left:-33px;top:5px;width:10px;height:10px;background:var(--cyan);border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 10px rgba(0,212,255,.4)}
         .timeline-year{font-size:.78em;color:var(--cyan);font-weight:600}
         .timeline-text{color:var(--muted);font-size:.85em;margin-top:3px}
-
         .cert-scroll{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
         .cert-scroll::-webkit-scrollbar{display:none}
         .cert-card{min-width:170px;scroll-snap-align:start;text-align:center;padding:20px 16px;border:1px solid var(--border);border-radius:12px;background:var(--panel);backdrop-filter:blur(10px);transition:all .3s}
         .cert-card:hover{border-color:var(--cyan);transform:translateY(-2px)}
         .cert-card strong{color:var(--white);display:block;font-size:.95em}
-
         .ach-card{text-align:center;padding:22px}
         .ach-number{font-size:2em;font-weight:900;color:var(--cyan)}
         .ach-label{font-size:.8em;color:var(--muted);margin-top:4px}
-
         .quote-section{max-width:650px;margin:0 auto;text-align:center;padding:30px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);backdrop-filter:blur(15px)}
         .quote-icon{font-size:3em;color:var(--cyan);opacity:.5;margin-bottom:10px}
         .quote-text{font-size:1.2em;color:var(--white);font-weight:600;font-style:italic;line-height:1.5}
         .quote-author{color:var(--green);font-weight:700;margin-top:10px;font-size:.9em}
-
         .github-chart{width:100%;max-width:850px;border-radius:12px;border:1px solid var(--border);display:block;margin:0 auto}
         .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;text-align:center}
         .contact-card{padding:22px 16px;text-decoration:none;color:var(--text)}
         .contact-icon{font-size:1.8em;margin-bottom:8px}
         .contact-card strong{color:var(--white);display:block;font-size:.95em}
         .contact-card span,.contact-card a{color:var(--muted);font-size:.82em;text-decoration:none}
-
         .footer{text-align:center;padding:40px 0 30px;border-top:1px solid var(--border);color:var(--muted);font-size:.84em;position:relative;z-index:1}
         .footer-links{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:10px 0}
         .footer-links a{color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
@@ -180,16 +151,42 @@
         #back-to-top{position:fixed;bottom:28px;right:28px;z-index:99;background:var(--cyan);color:var(--bg);width:44px;height:44px;border-radius:50%;border:none;font-size:1.3em;cursor:pointer;opacity:0;transition:all .3s;box-shadow:0 0 20px rgba(0,212,255,.4)}
         #back-to-top.show{opacity:1}
         #back-to-top:hover{transform:scale(1.1)}
-
-        @media(max-width:768px){.hero-grid{grid-template-columns:1fr;text-align:center;gap:30px}.hero-desc{margin:0 auto 28px}.btn-group{justify-content:center}.hero-stats{justify-content:center}.hero-visual{order:-1;width:260px;height:260px}.nav-links{display:none;position:absolute;top:100%;left:0;width:100%;background:rgba(2,8,16,.97);flex-direction:column;padding:20px;gap:8px}.nav-links.open{display:flex}.nav-toggle{display:block}#cursor,#cursor-dot{display:none!important}body{cursor:auto}.section-title{font-size:1.8em}}
+        #jarvis-bubble{position:fixed;bottom:28px;left:28px;width:52px;height:52px;background:linear-gradient(135deg,var(--cyan),var(--purple));border-radius:50%;cursor:pointer;z-index:10000;display:flex;align-items:center;justify-content:center;font-size:1.4em;box-shadow:0 0 25px rgba(0,212,255,.5);transition:all .3s;animation:floatBubble 3s ease-in-out infinite}
+        @keyframes floatBubble{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        #jarvis-bubble:hover{transform:scale(1.1);box-shadow:0 0 40px rgba(0,212,255,.8)}
+        #jarvis-bubble .bubble-dot{position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:var(--green);border-radius:50%;border:2px solid var(--bg);animation:pulse 2s infinite}
+        #jarvis-window{position:fixed;bottom:90px;left:28px;width:380px;height:500px;background:rgba(10,18,40,.95);backdrop-filter:blur(25px);border:1px solid var(--border-bright);border-radius:20px;z-index:10000;display:none;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+        #jarvis-window.open{display:flex;animation:chatSlideUp .4s ease}
+        @keyframes chatSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .chat-header{padding:16px 18px;background:rgba(0,212,255,.1);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .chat-header h4{color:var(--white);font-size:.95em;display:flex;align-items:center;gap:8px}
+        .chat-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2em;transition:color .2s}
+        .chat-close:hover{color:var(--white)}
+        .chat-body{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+        .chat-body::-webkit-scrollbar{width:3px}
+        .chat-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        .chat-msg{max-width:85%;padding:10px 14px;border-radius:16px;font-size:.82em;line-height:1.5;animation:msgPop .3s ease}
+        @keyframes msgPop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+        .chat-msg.ai{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
+        .chat-msg.user{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.2);color:var(--white);align-self:flex-end;border-bottom-right-radius:4px}
+        .chat-msg .msg-link{color:var(--cyan);text-decoration:none;font-weight:500;font-size:.8em;display:inline-block;margin-top:4px}
+        .chat-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 16px;border-top:1px solid var(--border)}
+        .chat-chip{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--cyan);padding:7px 14px;border-radius:20px;font-size:.74em;cursor:pointer;transition:all .2s;white-space:nowrap;font-weight:500}
+        .chat-chip:hover{background:rgba(0,212,255,.2);border-color:var(--cyan)}
+        .chat-input-area{display:flex;padding:10px 14px;gap:6px;border-top:1px solid var(--border);align-items:center}
+        .chat-input-area input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:20px;font-size:.8em;outline:none;font-family:var(--font)}
+        .chat-input-area input:focus{border-color:var(--cyan)}
+        .chat-send,.chat-mic-btn{background:var(--cyan);color:var(--bg);border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:.9em;transition:all .2s;font-weight:700;display:flex;align-items:center;justify-content:center}
+        .chat-send:hover,.chat-mic-btn:hover{background:var(--white)}
+        .chat-mic-btn.listening{background:#ef4444;color:#fff;animation:micPulse 1s ease-in-out infinite}
+        @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
+        @media(max-width:768px){.hero-grid{grid-template-columns:1fr;text-align:center;gap:30px}.hero-desc{margin:0 auto 28px}.btn-group{justify-content:center}.hero-stats{justify-content:center}.hero-visual{order:-1;width:260px;height:260px}.nav-links{display:none;position:absolute;top:100%;left:0;width:100%;background:rgba(2,8,16,.97);flex-direction:column;padding:20px;gap:8px}.nav-links.open{display:flex}.nav-toggle{display:block}#cursor,#cursor-dot{display:none!important}body{cursor:auto}.section-title{font-size:1.8em}#jarvis-window{width:calc(100vw - 40px);left:20px;bottom:80px;height:440px}}
     </style>
 </head>
 <body>
-
 <canvas id="galaxy-canvas"></canvas>
 <div id="scroll-progress"></div>
 <div id="cursor"></div><div id="cursor-dot"></div>
-
 <nav class="nav" id="navbar"><div class="container nav-inner">
 <a href="#" class="nav-logo">⚡ ASHIQ</a>
 <button class="nav-toggle" id="nav-toggle" aria-label="Menu">☰</button>
@@ -236,20 +233,12 @@
 <div class="timeline-item"><div class="timeline-year">Mid 2026</div><div class="timeline-text">Expanded to Contact Book & Text Editor. 3 projects.</div></div>
 <div class="timeline-item"><div class="timeline-year">Now</div><div class="timeline-text">Preparing for CS degree. AI, Cybersecurity & 6-7 languages.</div></div>
 </div></div>
-<div class="card"><h3>🎯 My Goal</h3><p style="margin-top:8px;">Pursuing a <strong style="color:var(--cyan);">Bachelor's in CS</strong> abroad. Becoming <strong style="color:var(--green);">multilingual</strong> — mastering 6-7 languages.</p>
+<div class="card"><h3>🎯 My Goal</h3><p>Pursuing a <strong style="color:var(--cyan);">Bachelor's in CS</strong> abroad. Becoming <strong style="color:var(--green);">multilingual</strong> — mastering 6-7 languages.</p>
 <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;"><span style="background:rgba(0,255,136,.1);color:var(--green);padding:5px 12px;border-radius:14px;font-size:.78em;font-weight:600;border:1px solid rgba(0,255,136,.2);">IELTS 6.0</span><span style="background:rgba(0,212,255,.1);color:var(--cyan);padding:5px 12px;border-radius:14px;font-size:.78em;font-weight:600;border:1px solid rgba(0,212,255,.2);">German A2→B1</span><span style="background:rgba(124,58,237,.1);color:var(--purple);padding:5px 12px;border-radius:14px;font-size:.78em;font-weight:600;border:1px solid rgba(124,58,237,.2);">200+ Hours</span></div></div>
 </div></div></section>
 
-<section class="section"><div class="container reveal">
-<div class="quote-section">
-    <div class="quote-icon"></div>
-    <p class="quote-text">"I am a fast learner who enjoys solving problems with Python and AI-assisted tools. Give me a problem, and I'll find a solution!"</p>
-    <p class="quote-author">— Ashiq Hussain</p>
-    <p style="color:var(--muted);font-size:.82em;margin-top:8px;">🕒 200+ hours self-study • 🚀 3 projects on GitHub • 🤖 AI-assisted learning • 🌱 Started from ZERO</p>
-</div>
-</div></section>
+<section class="section"><div class="container reveal"><div class="quote-section"><div class="quote-icon"></div><p class="quote-text">"I am a fast learner who enjoys solving problems with Python and AI-assisted tools. Give me a problem, and I'll find a solution!"</p><p class="quote-author">— Ashiq Hussain</p><p style="color:var(--muted);font-size:.82em;margin-top:8px;">🕒 200+ hours self-study • 🚀 3 projects on GitHub • 🤖 AI-assisted learning • 🌱 Started from ZERO</p></div></div></section>
 
-<!-- ═══════════ PROJECTS WITH LINKS ═══════════ -->
 <section id="projects" class="section"><div class="section-divider"></div><div class="container reveal">
 <div class="section-header"><span class="section-label">Work</span><h2 class="section-title">Featured Projects</h2></div>
 <div class="grid-3">
@@ -273,41 +262,14 @@
 </div>
 </div></div></section>
 
-<!-- ═══════════ CERTIFICATES WITH LINKS ═══════════ -->
 <section id="certificates" class="section"><div class="section-divider"></div><div class="container reveal">
 <div class="section-header"><span class="section-label">Credentials</span><h2 class="section-title">Certificates</h2></div>
 <div class="cert-scroll">
-
-<div class="cert-card">
-    <strong>🐍 Python</strong><br>
-    <span style="color:var(--muted);font-size:.78em;">Simplilearn</span><br>
-    <a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/146422482/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a>
-</div>
-
-<div class="cert-card">
-    <strong>💼 HP LIFE</strong><br>
-    <span style="color:var(--muted);font-size:.78em;">Representation</span><br>
-    <a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/2119829664/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a>
-</div>
-
-<div class="cert-card">
-    <strong>⌨️ 48 WPM</strong><br>
-    <span style="color:var(--muted);font-size:.78em;">Typing.com</span><br>
-    <a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/559849615/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a>
-</div>
-
-<div class="cert-card">
-    <strong>🎓 MindLuster</strong><br>
-    <span style="color:var(--muted);font-size:.78em;">LinkedIn Skills</span><br>
-    <a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/649597109/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a>
-</div>
-
-<div class="cert-card">
-    <strong>🌍 IELTS 6.0</strong><br>
-    <span style="color:var(--muted);font-size:.78em;">English</span><br>
-    <a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/493002627/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a>
-</div>
-
+<div class="cert-card"><strong>🐍 Python</strong><br><span style="color:var(--muted);font-size:.78em;">Simplilearn</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/146422482/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a></div>
+<div class="cert-card"><strong>💼 HP LIFE</strong><br><span style="color:var(--muted);font-size:.78em;">Representation</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/2119829664/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a></div>
+<div class="cert-card"><strong>⌨️ 48 WPM</strong><br><span style="color:var(--muted);font-size:.78em;">Typing.com</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/559849615/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a></div>
+<div class="cert-card"><strong>🎓 MindLuster</strong><br><span style="color:var(--muted);font-size:.78em;">LinkedIn Skills</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/649597109/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a></div>
+<div class="cert-card"><strong>🌍 IELTS 6.0</strong><br><span style="color:var(--muted);font-size:.78em;">English</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/493002627/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7em;">🔗 View →</a></div>
 </div></div></section>
 
 <section id="github" class="section"><div class="section-divider"></div><div class="container reveal">
@@ -339,48 +301,58 @@
 
 <button id="back-to-top">↑</button>
 
+<div id="jarvis-bubble" title="Chat with JARVIS!">🤖<span class="bubble-dot"></span></div>
+<div id="jarvis-window">
+    <div class="chat-header"><h4>🤖 J.A.R.V.I.S.</h4><button class="chat-close" id="chatClose">✕</button></div>
+    <div class="chat-body" id="chatBody"><div class="chat-msg ai">👋 Hi! I'm <strong>J.A.R.V.I.S.</strong> — Ashiq's AI assistant.<br>Ask me or use 🎤 voice! Try:<br>• About • Projects • Skills<br>• Resume • Contact • Goals<br>• Certificates • Education</div></div>
+    <div class="chat-chips" id="chatChips">
+        <span class="chat-chip" data-q="about">👋 About</span><span class="chat-chip" data-q="projects">💼 Projects</span><span class="chat-chip" data-q="skills">🛠️ Skills</span><span class="chat-chip" data-q="resume">📄 Resume</span><span class="chat-chip" data-q="contact">📞 Contact</span>
+    </div>
+    <div class="chat-input-area"><button class="chat-mic-btn" id="chatMic" title="Voice Input">🎤</button><input type="text" id="chatInput" placeholder="Type or speak..." /><button class="chat-send" id="chatSend">➤</button></div>
+</div>
+
 <script>
 const gc=document.getElementById('galaxy-canvas'),gx=gc.getContext('2d');let GW,GH,stars=[];
 function rg(){GW=gc.width=innerWidth;GH=gc.height=innerHeight}rg();addEventListener('resize',rg);
 for(let i=0;i<500;i++){let b=155+Math.floor(Math.random()*100);let c=Math.random()>.7?`${b},${b},255`:'255,255,255';stars.push({x:Math.random()*GW,y:Math.random()*GH,r:Math.random()*2.5+.3,twinkle:Math.random()*Math.PI*2,speed:.004+Math.random()*.025,color:c});}
 function drawGalaxy(){gx.fillStyle='rgba(2,8,16,.06)';gx.fillRect(0,0,GW,GH);stars.forEach(s=>{s.twinkle+=s.speed;let a=.25+.4*Math.sin(s.twinkle);gx.beginPath();gx.arc(s.x,s.y,s.r,0,Math.PI*2);gx.fillStyle=`rgba(${s.color},${a})`;gx.fill();if(s.r>1.8){gx.beginPath();gx.arc(s.x,s.y,s.r*2,0,Math.PI*2);gx.fillStyle=`rgba(${s.color},${a*.12})`;gx.fill();}});if(Math.random()<.025){let sx=Math.random()*GW,sy=Math.random()*GH*.3,len=35+Math.random()*90;gx.beginPath();gx.moveTo(sx,sy);gx.lineTo(sx+len,sy+len*.4);gx.strokeStyle='rgba(255,255,255,.6)';gx.lineWidth=1.3;gx.stroke();}requestAnimationFrame(drawGalaxy);}drawGalaxy();
-
-if(innerWidth>768){const cur=document.getElementById('cursor'),dot=document.getElementById('cursor-dot');cur.style.display='block';dot.style.display='block';let mx=0,my=0,cx=0,cy=0;document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;document.getElementById('cursor-dot').style.left=mx+'px';document.getElementById('cursor-dot').style.top=my+'px';});document.querySelectorAll('a,button,.card,.btn,.project-link').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('hover'));el.addEventListener('mouseleave',()=>cur.classList.remove('hover'));});document.addEventListener('click',e=>{for(let i=0;i<8;i++){const p=document.createElement('div');p.className='click-particle';p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';const angle=Math.random()*Math.PI*2,dist=20+Math.random()*50;p.style.setProperty('--dx',Math.cos(angle)*dist+'px');p.style.setProperty('--dy',Math.sin(angle)*dist+'px');document.body.appendChild(p);setTimeout(()=>p.remove(),800);}});function updateCursor(){cx+=(mx-cx)*.2;cy+=(my-cy)*.2;cur.style.left=(cx-11)+'px';cur.style.top=(cy-11)+'px';if(Math.abs(mx-cx)>2){const t=document.createElement('div');t.className='cursor-trail';t.style.left=cx+'px';t.style.top=cy+'px';document.body.appendChild(t);setTimeout(()=>t.remove(),500);}requestAnimationFrame(updateCursor);}updateCursor();}
-
+if(innerWidth>768){const cur=document.getElementById('cursor'),dot=document.getElementById('cursor-dot');cur.style.display='block';dot.style.display='block';let mx=0,my=0,cx=0,cy=0;document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px'});document.querySelectorAll('a,button,.card,.btn,.project-link').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('hover'));el.addEventListener('mouseleave',()=>cur.classList.remove('hover'))});document.addEventListener('click',e=>{for(let i=0;i<8;i++){const p=document.createElement('div');p.className='click-particle';p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';const angle=Math.random()*Math.PI*2,dist=20+Math.random()*50;p.style.setProperty('--dx',Math.cos(angle)*dist+'px');p.style.setProperty('--dy',Math.sin(angle)*dist+'px');document.body.appendChild(p);setTimeout(()=>p.remove(),800)}});function updateCursor(){cx+=(mx-cx)*.2;cy+=(my-cy)*.2;cur.style.left=(cx-11)+'px';cur.style.top=(cy-11)+'px';if(Math.abs(mx-cx)>2){const t=document.createElement('div');t.className='cursor-trail';t.style.left=cx+'px';t.style.top=cy+'px';document.body.appendChild(t);setTimeout(()=>t.remove(),500)}requestAnimationFrame(updateCursor)}updateCursor()}
 const phrases=['Python Developer','AI Enthusiast','CS Student','Desktop App Builder'];let pi=0,ci=0,del=false;
 function type(){let cp=phrases[pi];document.getElementById('typing-text').textContent=cp.substring(0,ci);if(!del&&ci<cp.length){ci++;setTimeout(type,65)}else if(del&&ci>0){ci--;setTimeout(type,30)}else{del=!del;if(!del)pi=(pi+1)%phrases.length;setTimeout(type,del?1800:450)}}type();
-
-document.querySelectorAll('.card').forEach(card=>{card.addEventListener('mousemove',e=>{let r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(800px) rotateY(${x*6}deg) rotateX(${-y*6}deg) translateZ(4px)`;card.style.setProperty('--mx',(e.clientX-r.left)/r.width*100+'%');card.style.setProperty('--my',(e.clientY-r.top)/r.height*100+'%');});card.addEventListener('mouseleave',()=>{card.style.transform='';});});
-
-addEventListener('scroll',()=>{let s=document.documentElement.scrollTop,h=document.documentElement.scrollHeight-innerHeight;document.getElementById('scroll-progress').style.width=(s/h*100)+'%';document.getElementById('navbar').classList.toggle('scrolled',s>50);document.getElementById('back-to-top').classList.toggle('show',s>500);});document.getElementById('back-to-top').addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
-document.getElementById('nav-toggle').addEventListener('click',function(){let m=document.getElementById('nav-menu');m.classList.toggle('open');this.setAttribute('aria-expanded',m.classList.contains('open'));});
-
-const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (e.isIntersecting) {
-            e.target.classList.add('visible');
-            e.target.querySelectorAll('[data-target]').forEach(el => {
-                let t = parseInt(el.dataset.target), c = 0;
-                let i = setInterval(() => {
-                    c += Math.ceil(t / 40);
-                    if (c >= t) {
-                        el.textContent = t + (t === 200 ? '+' : '');
-                        clearInterval(i);
-                    } else {
-                        el.textContent = c;
-                    }
-                }, 40);
-            });
-            e.target.querySelectorAll('.skill-bar-fill').forEach(bar => {
-                setTimeout(() => bar.classList.add('animated'), 200);
-            });
-        }
-    });
-}, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
+document.querySelectorAll('.card').forEach(card=>{card.addEventListener('mousemove',e=>{let r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(800px) rotateY(${x*6}deg) rotateX(${-y*6}deg) translateZ(4px)`;card.style.setProperty('--mx',(e.clientX-r.left)/r.width*100+'%');card.style.setProperty('--my',(e.clientY-r.top)/r.height*100+'%')});card.addEventListener('mouseleave',()=>{card.style.transform=''})});
+addEventListener('scroll',()=>{let s=document.documentElement.scrollTop,h=document.documentElement.scrollHeight-innerHeight;document.getElementById('scroll-progress').style.width=(s/h*100)+'%';document.getElementById('navbar').classList.toggle('scrolled',s>50);document.getElementById('back-to-top').classList.toggle('show',s>500)});document.getElementById('back-to-top').addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+document.getElementById('nav-toggle').addEventListener('click',function(){let m=document.getElementById('nav-menu');m.classList.toggle('open')});
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');e.target.querySelectorAll('[data-target]').forEach(el=>{let t=parseInt(el.dataset.target),c=0;let i=setInterval(()=>{c+=Math.ceil(t/40);if(c>=t){el.textContent=t+(t===200?'+':'');clearInterval(i)}else el.textContent=c},40)});e.target.querySelectorAll('.skill-bar-fill').forEach(bar=>{setTimeout(()=>bar.classList.add('animated'),200)})}})},{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 fetch('https://api.github.com/users/ashiqhussain-97').then(r=>r.json()).then(d=>{document.getElementById('gh-repos').textContent=d.public_repos||3;document.getElementById('gh-followers').textContent=d.followers||0}).catch(()=>{document.getElementById('gh-repos').textContent='3';document.getElementById('gh-followers').textContent='0'});
 document.getElementById('year').textContent=new Date().getFullYear();
+
+// ═══════════ VOICE-ACTIVATED JARVIS WITH DETAILED RESPONSES ═══════════
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;let recognition=null;
+if(SpeechRecognition){recognition=new SpeechRecognition();recognition.continuous=false;recognition.lang='en-US';recognition.interimResults=false}
+let isListening=false;
+const chatBubble=document.getElementById('jarvis-bubble'),chatWindow=document.getElementById('jarvis-window'),chatClose=document.getElementById('chatClose'),chatBody=document.getElementById('chatBody'),chatInput=document.getElementById('chatInput'),chatSend=document.getElementById('chatSend'),chatMic=document.getElementById('chatMic'),chatChips=document.getElementById('chatChips');
+chatBubble.addEventListener('click',()=>{chatWindow.classList.toggle('open');chatBubble.style.display=chatWindow.classList.contains('open')?'none':'flex'});
+chatClose.addEventListener('click',()=>{chatWindow.classList.remove('open');chatBubble.style.display='flex';stopListening()});
+function addMsg(text,type){const msg=document.createElement('div');msg.className='chat-msg '+type;msg.innerHTML=text;chatBody.appendChild(msg);chatBody.scrollTop=chatBody.scrollHeight}
+
+function getResponse(query){const q=query.toLowerCase();
+if(q.includes('about')||q.includes('who')||q.includes('hi')||q.includes('hello')||q.includes('hey')){speak('Ashiq Hussain is a dedicated Python Developer and CS Student from Pakistan with over 200 hours of coding experience.');return`<strong>👋 About Ashiq Hussain</strong><br><br>Ashiq is a <strong>Python Developer & CS Student</strong> from Punjab, Pakistan.<br><br>📚 <strong>Education:</strong><br>• SSC — Dar-e-Arqam, Sargodha (90% marks)<br>• HSSC Pre-Engineering — Punjab Group, Lahore (77% marks)<br>• Preparing for BS in Computer Science abroad<br><br>🕒 <strong>Experience:</strong><br>• 200+ hours of self-taught coding<br>• 3 desktop applications built from scratch<br>• AI-assisted learning approach<br>• 5 professional certificates earned<br><br>🌍 <strong>Languages:</strong><br>• Native: Urdu, Punjabi<br>• Fluent: English (IELTS 6.0)<br>• Learning: German (A2→B1)<br>• Goal: Master 6-7 languages<br><br>💪 <strong>Strength:</strong> "Fast learner who solves problems with Python and AI tools."`}
+if(q.includes('project')||q.includes('work')||q.includes('build')||q.includes('portfolio')){speak('Ashiq has built 3 complete desktop applications using Python and Tkinter. All available on GitHub.');return`<strong>💼 Projects</strong><br><br><strong>📞 Contact Book</strong><br>• Full CRUD with persistent file storage<br>• Add, update, delete & search contacts<br>• Input validation and error handling<br>• <a href="https://github.com/ashiqhussain-97/Contact-Book-.git" target="_blank" class="msg-link">🔗 View on GitHub →</a><br><br><strong>🕐 Digital Clock</strong><br>• Real-time clock with live updates<br>• 12/24 hour toggle functionality<br>• Clean Tkinter GUI interface<br>• <a href="https://github.com/ashiqhussain-97/Digital-Clock.git" target="_blank" class="msg-link">🔗 View on GitHub →</a><br><br><strong>📝 Text Editor</strong><br>• Lightweight desktop text editor<br>• File open, save & edit operations<br>• Keyboard shortcuts for productivity<br>• <a href="https://github.com/ashiqhussain-97/Simple-Text-Editor.git" target="_blank" class="msg-link">🔗 View on GitHub →</a><br><br>🚀 <a href="https://github.com/ashiqhussain-97" target="_blank" class="msg-link">View all repositories →</a>`}
+if(q.includes('skill')||q.includes('tech')||q.includes('know')||q.includes('stack')||q.includes('ability')){speak('Python, Tkinter GUI, Git version control, and AI-assisted development.');return`<strong>🛠️ Technical Skills</strong><br><br>🐍 <strong>Python</strong> — Intermediate (70%)<br>• OOP, file handling, data structures<br>• GUI development with Tkinter<br><br>🖥️ <strong>Tkinter</strong> — Intermediate (65%)<br>• Desktop application development<br>• Event-driven programming<br><br>🔧 <strong>Git & GitHub</strong> — Intermediate (60%)<br>• Version control and collaboration<br><br>🤖 <strong>AI-Assisted Development</strong><br>• 3x faster learning progress<br><br>📦 <strong>Learning:</strong> Flask, SQL, Cybersecurity<br>🇩🇪 <strong>German:</strong> A2→B1 (40%)<br>⌨️ <strong>Typing:</strong> 48 WPM`}
+if(q.includes('resume')||q.includes('cv')||q.includes('download')||q.includes('hire')){speak('Ashiq\'s resume is available on LinkedIn.');return`<strong>📄 Resume</strong><br><br>Complete professional resume available on LinkedIn.<br><br><strong>Highlights:</strong><br>• Python Developer with 3 projects<br>• 5 professional certificates<br>• 200+ hours coding experience<br>• AI & Cybersecurity enthusiast<br>• IELTS 6.0 — English Proficiency<br><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/1777658061108/single-media-viewer/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" class="msg-link">🔗 View Resume on LinkedIn →</a>`}
+if(q.includes('contact')||q.includes('email')||q.includes('phone')||q.includes('reach')||q.includes('connect')||q.includes('message')){speak('You can reach Ashiq via email, LinkedIn, GitHub, or WhatsApp.');return`<strong>📞 Contact Ashiq</strong><br><br>📧 <strong>Email:</strong> ashiqhussain97.kh@gmail.com<br>📱 <strong>Phone/WhatsApp:</strong> +92 328 0802773<br><br>🔗 <a href="https://www.linkedin.com/in/ashiq-hussain97/" target="_blank" class="msg-link">LinkedIn Profile →</a><br>🐙 <a href="https://github.com/ashiqhussain-97" target="_blank" class="msg-link">GitHub Profile →</a><br><br>📍 <strong>Location:</strong> Punjab, Pakistan<br>🕐 <strong>Availability:</strong> Open to opportunities`}
+if(q.includes('goal')||q.includes('future')||q.includes('aim')||q.includes('vision')||q.includes('dream')||q.includes('plan')){speak('Ashiq aims to pursue BS in Computer Science abroad with focus on AI and Cybersecurity.');return`<strong>🎯 Goals & Vision</strong><br><br>📚 <strong>Education:</strong> BS in Computer Science abroad<br>🤖 <strong>Specialization:</strong> AI & Cybersecurity<br>🌍 <strong>Languages:</strong> Master 6-7 languages<br>💼 <strong>Career:</strong> Professional Software Developer<br><br>💪 <strong>Motto:</strong> "Fast learner who solves problems with Python and AI tools."`}
+if(q.includes('certificate')||q.includes('certification')||q.includes('credential')||q.includes('qualification')){speak('Ashiq has earned 5 professional certificates.');return`<strong>📜 Certificates</strong><br><br>🐍 Python — Simplilearn<br>💼 HP LIFE — Effective Representation<br>⌨️ 48 WPM — Typing.com<br>🎓 LinkedIn Skills — MindLuster<br>🌍 IELTS 6.0 — English Proficiency<br><br>🔗 <a href="https://www.linkedin.com/in/ashiq-hussain97/" target="_blank" class="msg-link">View all on LinkedIn →</a>`}
+if(q.includes('education')||q.includes('study')||q.includes('school')||q.includes('college')||q.includes('academic')){speak('Ashiq completed SSC with 90 percent and HSSC Pre-Engineering with 77 percent.');return`<strong>🎓 Education</strong><br><br>📘 <strong>SSC:</strong> Dar-e-Arqam, Sargodha — 90%<br>📗 <strong>HSSC:</strong> Punjab Group, Lahore — 77%<br>🎯 <strong>Interest:</strong> Software Development, AI<br>📚 <strong>Future:</strong> BS in CS abroad`}
+speak('I can help you learn about Ashiq. Try asking about projects, skills, resume, or contact.');return`<strong>🤔 How can I help?</strong><br><br>👋 <strong>"About Ashiq"</strong> — Personal info<br>💼 <strong>"Show projects"</strong> — All 3 projects<br>🛠️ <strong>"What skills?"</strong> — Tech stack<br>📄 <strong>"Download resume"</strong> — LinkedIn CV<br>📞 <strong>"Contact info"</strong> — All channels<br>🎯 <strong>"Goals"</strong> — Future plans<br>📜 <strong>"Certificates"</strong> — All 5 certs<br>🎓 <strong>"Education"</strong> — Academic history<br><br>💡 Use 🎤 voice button to speak!`}
+
+function speak(text){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=.9;u.pitch=1.1;u.volume=.8;const v=speechSynthesis.getVoices().find(vo=>vo.lang.includes('en-GB')||vo.lang.includes('en-US'))||speechSynthesis.getVoices()[0];if(v)u.voice=v;speechSynthesis.speak(u)}}
+function handleSend(){const q=chatInput.value.trim();if(!q)return;addMsg(q,'user');chatInput.value='';setTimeout(()=>{addMsg(getResponse(q),'ai')},600+Math.random()*500)}
+function stopListening(){if(recognition&&isListening){recognition.stop();isListening=false;chatMic.classList.remove('listening');chatMic.textContent='🎤';chatMic.style.background=''}}
+function startListening(){if(!recognition){addMsg('Voice not supported. Please type.','ai');return}if(isListening){stopListening();return}isListening=true;chatMic.classList.add('listening');chatMic.textContent='🔴';chatMic.style.background='#ef4444';addMsg('🎤 Listening... Speak!','ai');recognition.start();recognition.onresult=(e)=>{const t=e.results[0][0].transcript;chatInput.value=t;stopListening();addMsg(t,'user');setTimeout(()=>{addMsg(getResponse(t),'ai')},600+Math.random()*500)};recognition.onerror=()=>{stopListening();addMsg('Could not hear. Try again.','ai')};recognition.onend=()=>{stopListening()}}
+chatSend.addEventListener('click',handleSend);chatInput.addEventListener('keypress',(e)=>{if(e.key==='Enter')handleSend()});chatMic.addEventListener('click',startListening);
+chatChips.addEventListener('click',(e)=>{if(e.target.classList.contains('chat-chip')){const q=e.target.dataset.q;addMsg(e.target.textContent,'user');setTimeout(()=>{addMsg(getResponse(q),'ai')},500)}});
+if(SpeechRecognition)speechSynthesis.getVoices();
 </script>
 </body>
 </html>
