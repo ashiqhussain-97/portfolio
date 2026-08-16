@@ -4203,41 +4203,835 @@
         }
     ];
 
-    function generateBadges() {
-        const grid = document.getElementById("badgeGrid");
-        if (!grid) return;
-        
-        grid.innerHTML = globeBadges.map(badge => `
-            <div class="card badge-card">
-                <img src="${badge.img}" 
-                     alt="${badge.alt}" 
-                     loading="lazy"
+    // ============================================
+// GLOBE ACHIEVEMENT SYSTEM - STABLE BADGE COLORS
+// ============================================
+
+function openBadgeModal(badgeData, rarityConfig) {
+    const rarity = rarityConfig[badgeData.rarity] || rarityConfig.COMMON;
+    
+    // Remove any existing modal
+    const existingModal = document.querySelector('.badge-modal-overlay');
+    if (existingModal) existingModal.remove();
+    
+    // Create modal overlay
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'badge-modal-overlay';
+    modalOverlay.innerHTML = `
+        <div class="badge-modal" style="--modal-rarity-color: ${rarity.color}; --modal-rarity-glow: ${rarity.glow};">
+            <button class="modal-close" aria-label="Close">&times;</button>
+            
+            <div class="modal-image-container">
+                <div class="modal-energy-ring"></div>
+                <div class="modal-energy-ring"></div>
+                <img src="${badgeData.img}" alt="${badgeData.alt}" 
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div style="display:none; width:70px; height:70px; border-radius:12px; 
-                     background:linear-gradient(135deg, var(--panel), var(--panel-hover)); 
-                     margin:0 auto 8px; align-items:center; justify-content:center; font-size:30px;">
-                    🌍
+                <div style="display:none; width:100%; height:100%; 
+                            background: radial-gradient(circle, ${rarity.color}, #000); 
+                            align-items:center; justify-content:center; font-size:40px;">
+                    ⚛
                 </div>
-                <span class="badge-name">${badge.name}</span>
-                <span class="badge-desc">${badge.desc}</span>
             </div>
-        `).join("");
-    }
-
-    function toggleGlobeBadges() {
-        const section = document.getElementById("globe-badges-section");
-        if (!section) return;
-        
-        const isActive = section.classList.toggle("active");
-        
-        if (isActive) {
-            generateBadges();
-            section.scrollIntoView({ behavior: "smooth", block: "start" });
+            
+            <div class="modal-title">${badgeData.name}</div>
+            <div class="modal-description">${badgeData.desc}</div>
+            
+            <div class="modal-details">
+                <div class="detail-item">
+                    <div class="detail-label">Category</div>
+                    <div class="detail-value">${badgeData.category || 'GENERAL'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Level</div>
+                    <div class="detail-value">${badgeData.level || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">${badgeData.status || 'VERIFIED'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">ID</div>
+                    <div class="detail-value">${badgeData.id || 'N/A'}</div>
+                </div>
+            </div>
+            
+            <div class="modal-progress-container">
+                <div class="modal-progress-label">${badgeData.progress}%</div>
+                <div class="modal-progress-bar">
+                    <div class="modal-progress-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modalOverlay);
+    
+    // Force reflow for animation
+    void modalOverlay.offsetWidth;
+    modalOverlay.classList.add('active');
+    
+    // Animate progress bar
+    setTimeout(() => {
+        const progressFill = modalOverlay.querySelector('.modal-progress-fill');
+        if (progressFill) {
+            progressFill.style.width = badgeData.progress + '%';
         }
+    }, 300);
+    
+    // Close modal function
+    const closeModal = () => {
+        modalOverlay.classList.remove('active');
+        modalOverlay.classList.add('closing');
+        
+        setTimeout(() => {
+            modalOverlay.remove();
+            document.removeEventListener('keydown', handleKeydown);
+        }, 300);
+    };
+    
+    const handleKeydown = (e) => {
+        if (e.key === 'Escape') closeModal();
+    };
+    
+    // Event listeners for closing
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
+    });
+    modalOverlay.querySelector('.modal-close').addEventListener('click', closeModal);
+    document.addEventListener('keydown', handleKeydown);
+}
+
+function generateBadges() {
+    const grid = document.getElementById("badgeGrid");
+    if (!grid) return;
+    
+    // Check if globeBadges is defined
+    if (typeof globeBadges === 'undefined') {
+        console.error('globeBadges is not defined');
+        return;
     }
 
-    // Generate on page load (section hidden, but ready)
-    document.addEventListener("DOMContentLoaded", generateBadges);
+    // Rarity configuration
+    const rarityConfig = {
+        COMMON: { 
+            color: '#4CAF50', 
+            glow: 'rgba(76,175,80,0.6)', 
+            particleCount: 3
+        },
+        RARE: { 
+            color: '#2196F3', 
+            glow: 'rgba(33,150,243,0.7)', 
+            particleCount: 4
+        },
+        EPIC: { 
+            color: '#9C27B0', 
+            glow: 'rgba(156,39,176,0.8)', 
+            particleCount: 5
+        },
+        LEGENDARY: { 
+            color: '#FFD700', 
+            glow: 'rgba(255,215,0,0.9)', 
+            particleCount: 8
+        }
+    };
+
+    const getRarity = (index) => {
+        if (index === 0) return 'LEGENDARY';
+        if (index <= 2) return 'EPIC';
+        if (index <= 5) return 'RARE';
+        return 'COMMON';
+    };
+
+    const enhancedBadges = globeBadges.map((badge, index) => ({
+        ...badge,
+        rarity: badge.rarity || getRarity(index),
+        progress: badge.progress || 100,
+        category: badge.category || 'GENERAL',
+        level: badge.level || `LEVEL ${String(index + 1).padStart(2, '0')}`,
+        status: badge.status || 'VERIFIED',
+        id: `ID:${String(index + 1).padStart(3, '0')}-SCI`
+    }));
+
+    // Inject styles only once
+    if (!document.getElementById('stableColorBadgeStyles')) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'stableColorBadgeStyles';
+        styleSheet.textContent = `
+            /* ==========================================
+               STABLE COLOR BADGE SYSTEM
+               ========================================== */
+            
+            .achievement-system {
+                position: relative;
+                width: 100%;
+                padding: 30px 20px;
+                background: transparent;
+                border: none;
+                overflow: visible;
+            }
+            
+            .achievement-header {
+                text-align: center;
+                margin-bottom: 30px;
+                position: relative;
+                z-index: 2;
+            }
+            
+            .achievement-header h2 {
+                font-size: 32px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #00ffff, #ff00ff, #00ffff);
+                background-size: 200% 200%;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                letter-spacing: 3px;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                animation: gradientShift 3s ease-in-out infinite;
+                filter: drop-shadow(0 0 20px rgba(0,255,255,0.5));
+            }
+            
+            .achievement-header .subtitle {
+                font-size: 13px;
+                color: rgba(0,255,255,0.8);
+                letter-spacing: 2px;
+                font-family: 'Courier New', monospace;
+                text-shadow: 0 0 15px rgba(0,255,255,0.6);
+            }
+            
+            .system-status-line {
+                margin-top: 12px;
+                display: inline-block;
+                padding: 6px 16px;
+                border: 1px solid rgba(0,255,255,0.3);
+                border-radius: 20px;
+                font-size: 10px;
+                color: rgba(0,255,255,0.8);
+                letter-spacing: 2px;
+                font-family: 'Courier New', monospace;
+                background: rgba(0,255,255,0.05);
+                animation: statusLinePulse 3s ease-in-out infinite;
+            }
+            
+            .badge-grid-responsive {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+                position: relative;
+                z-index: 2;
+                padding: 5px;
+            }
+            
+            /* SEPARATE VISIBLE CARD - STABLE COLORS */
+            .badge-card {
+                position: relative;
+                flex: 0 1 280px;
+                max-width: 320px;
+                min-width: 250px;
+                background: linear-gradient(145deg, 
+                    rgba(15,25,50,0.4) 0%, 
+                    rgba(5,10,30,0.6) 100%);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid var(--rarity-color, #00ffff);
+                border-radius: 20px;
+                padding: 25px 20px 20px;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                cursor: pointer;
+                overflow: hidden;
+                transform-style: preserve-3d;
+                perspective: 1000px;
+                animation: cardSlideIn 0.6s ease-out forwards;
+                opacity: 0;
+                will-change: transform;
+                box-shadow: 0 0 20px var(--rarity-glow, rgba(0,255,255,0.2)),
+                            inset 0 0 20px rgba(255,255,255,0.05);
+            }
+            
+            /* Legendary special styling */
+            .badge-card.legendary-card {
+                background: linear-gradient(145deg, 
+                    rgba(255,215,0,0.15) 0%, 
+                    rgba(15,25,50,0.5) 50%,
+                    rgba(5,10,30,0.7) 100%);
+                border: 2px solid rgba(255,215,0,0.6);
+                box-shadow: 0 0 30px rgba(255,215,0,0.4),
+                            inset 0 0 30px rgba(255,215,0,0.1);
+            }
+            
+            .badge-card::before {
+                content: '';
+                position: absolute;
+                top: -1px;
+                left: -1px;
+                right: -1px;
+                bottom: -1px;
+                border-radius: 20px;
+                background: linear-gradient(45deg, 
+                    var(--rarity-color, #00ffff), 
+                    transparent, 
+                    var(--rarity-color, #00ffff));
+                background-size: 400% 400%;
+                z-index: -1;
+                animation: rarityBorder 4s linear infinite;
+                opacity: 0.4;
+            }
+            
+            .badge-card:hover {
+                transform: translateY(-8px) scale(1.02);
+                border-color: var(--rarity-color, #00ffff);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.3),
+                            0 0 25px var(--rarity-glow, rgba(0,255,255,0.4)),
+                            0 0 50px var(--rarity-glow, rgba(0,255,255,0.2));
+            }
+            
+            .badge-image-container {
+                position: relative;
+                width: 90px;
+                height: 90px;
+                margin: 0 auto 12px;
+                z-index: 2;
+                transform-style: preserve-3d;
+            }
+            
+            /* IMAGE - NO COLOR CHANGE */
+            .badge-card img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid var(--rarity-color, #00ffff);
+                box-shadow: 0 0 30px var(--rarity-glow, rgba(0,255,255,0.5)),
+                            inset 0 0 30px var(--rarity-glow, rgba(0,255,255,0.2));
+                transition: transform 0.5s ease, box-shadow 0.5s ease;
+                position: relative;
+                z-index: 2;
+                filter: none;
+            }
+            
+            .badge-card:hover img {
+                transform: scale(1.1) rotate(360deg);
+                box-shadow: 0 0 50px var(--rarity-glow, rgba(0,255,255,0.7)),
+                            0 0 100px var(--rarity-glow, rgba(0,255,255,0.5)),
+                            inset 0 0 40px var(--rarity-glow, rgba(0,255,255,0.3));
+            }
+            
+            .energy-ring {
+                position: absolute;
+                top: -6px;
+                left: -6px;
+                right: -6px;
+                bottom: -6px;
+                border-radius: 50%;
+                border: 2px solid transparent;
+                border-top-color: var(--rarity-color, #00ffff);
+                animation: ringRotate 2s linear infinite;
+                z-index: 1;
+                filter: drop-shadow(0 0 10px var(--rarity-color, #00ffff));
+            }
+            
+            .energy-ring:nth-child(2) {
+                top: -12px;
+                left: -12px;
+                right: -12px;
+                bottom: -12px;
+                border-top-color: transparent;
+                border-bottom-color: var(--rarity-color, #00ffff);
+                animation-duration: 3s;
+                animation-direction: reverse;
+            }
+            
+            .particle {
+                position: absolute;
+                width: 3px;
+                height: 3px;
+                background: var(--rarity-color, #00ffff);
+                border-radius: 50%;
+                animation: particleFloat 3s ease-in-out infinite;
+                opacity: 0.9;
+                box-shadow: 0 0 10px var(--rarity-color, #00ffff), 0 0 20px var(--rarity-color, #00ffff);
+                z-index: 3;
+            }
+            
+            .status-dot {
+                position: absolute;
+                top: 8px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: #00ff00;
+                box-shadow: 0 0 8px #00ff00, 0 0 16px #00ff00;
+                animation: statusPulse 1.5s ease-in-out infinite;
+                z-index: 10;
+            }
+            
+            .progress-container {
+                margin-top: 12px;
+                position: relative;
+                z-index: 2;
+            }
+            
+            .progress-bar {
+                width: 100%;
+                height: 3px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+            
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, 
+                    var(--rarity-color, #00ffff), 
+                    rgba(255,255,255,0.9));
+                width: 0%;
+                transition: width 1.5s ease;
+                box-shadow: 0 0 15px var(--rarity-glow, rgba(0,255,255,0.6));
+            }
+            
+            .progress-label {
+                position: absolute;
+                right: 0;
+                top: -18px;
+                font-size: 10px;
+                color: rgba(255,255,255,0.8);
+                font-family: 'Courier New', monospace;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                text-shadow: 0 0 10px var(--rarity-glow, rgba(0,255,255,0.5));
+            }
+            
+            .badge-card:hover .progress-label { opacity: 1; }
+            
+            .badge-name {
+                font-size: 16px;
+                font-weight: 700;
+                color: rgba(255,255,255,0.95);
+                display: block;
+                margin: 8px 0 4px;
+                letter-spacing: 2px;
+                text-align: center;
+                text-shadow: 0 0 25px var(--rarity-glow, rgba(0,255,255,0.8));
+                z-index: 2;
+                position: relative;
+            }
+            
+            .badge-desc {
+                font-size: 12px;
+                color: rgba(255,255,255,0.7);
+                display: block;
+                line-height: 1.4;
+                text-align: center;
+                z-index: 2;
+                position: relative;
+            }
+            
+            /* ===== MODAL STYLES ===== */
+            .badge-modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.85);
+                backdrop-filter: blur(15px);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            
+            .badge-modal-overlay.active {
+                opacity: 1;
+            }
+            
+            .badge-modal-overlay.closing {
+                opacity: 0;
+            }
+            
+            .badge-modal {
+                background: linear-gradient(145deg, 
+                    rgba(255,255,255,0.05) 0%, 
+                    rgba(15,25,50,0.8) 50%,
+                    rgba(5,10,30,0.9) 100%);
+                backdrop-filter: blur(30px);
+                -webkit-backdrop-filter: blur(30px);
+                border: 1px solid var(--modal-rarity-color, #00ffff);
+                border-radius: 25px;
+                padding: 40px;
+                max-width: 500px;
+                width: 90%;
+                position: relative;
+                box-shadow: 0 0 60px var(--modal-rarity-glow), 
+                            inset 0 0 40px rgba(255,255,255,0.05);
+                transform: scale(0.8) translateY(20px);
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                overflow: hidden;
+            }
+            
+            .badge-modal-overlay.active .badge-modal {
+                transform: scale(1) translateY(0);
+            }
+            
+            .badge-modal .modal-close {
+                position: absolute;
+                top: 15px;
+                right: 20px;
+                background: none;
+                border: none;
+                color: #fff;
+                font-size: 28px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                z-index: 10;
+            }
+            
+            .badge-modal .modal-close:hover {
+                transform: rotate(90deg);
+                color: #ff5555;
+            }
+            
+            .modal-image-container {
+                width: 150px;
+                height: 150px;
+                margin: 0 auto 20px;
+                border-radius: 50%;
+                border: 3px solid var(--modal-rarity-color, #00ffff);
+                box-shadow: 0 0 40px var(--modal-rarity-glow), 
+                            inset 0 0 40px var(--modal-rarity-glow);
+                overflow: hidden;
+                position: relative;
+                animation: modalPulse 2s ease-in-out infinite;
+            }
+            
+            .modal-image-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                filter: none;
+            }
+            
+            .modal-energy-ring {
+                position: absolute;
+                top: -8px;
+                left: -8px;
+                right: -8px;
+                bottom: -8px;
+                border-radius: 50%;
+                border: 2px solid transparent;
+                border-top-color: var(--modal-rarity-color, #00ffff);
+                animation: ringRotate 2s linear infinite;
+                z-index: 1;
+            }
+            
+            .modal-energy-ring:nth-child(2) {
+                top: -16px;
+                left: -16px;
+                right: -16px;
+                bottom: -16px;
+                border-top-color: transparent;
+                border-bottom-color: var(--modal-rarity-color, #00ffff);
+                animation-duration: 3s;
+                animation-direction: reverse;
+            }
+            
+            .modal-title {
+                font-size: 26px;
+                color: #fff;
+                text-align: center;
+                letter-spacing: 2px;
+                margin-bottom: 10px;
+                text-shadow: 0 0 25px var(--modal-rarity-glow);
+            }
+            
+            .modal-description {
+                font-size: 15px;
+                color: rgba(255,255,255,0.85);
+                text-align: center;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+            
+            .modal-details {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .detail-item {
+                background: rgba(255,255,255,0.08);
+                padding: 12px;
+                border-radius: 12px;
+                text-align: center;
+                backdrop-filter: blur(10px);
+            }
+            
+            .detail-label {
+                font-size: 10px;
+                text-transform: uppercase;
+                color: rgba(0,255,255,0.7);
+                letter-spacing: 1px;
+                margin-bottom: 5px;
+            }
+            
+            .detail-value {
+                font-size: 15px;
+                color: #fff;
+                font-weight: 600;
+            }
+            
+            .modal-progress-container {
+                margin-top: 20px;
+            }
+            
+            .modal-progress-label {
+                font-size: 13px;
+                color: rgba(255,255,255,0.7);
+                margin-bottom: 5px;
+                text-align: right;
+            }
+            
+            .modal-progress-bar {
+                width: 100%;
+                height: 6px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 3px;
+                overflow: hidden;
+            }
+            
+            .modal-progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, var(--modal-rarity-color), #fff);
+                width: 0%;
+                transition: width 1s ease;
+                box-shadow: 0 0 15px var(--modal-rarity-glow);
+            }
+            
+            @keyframes gradientShift { 
+                0%,100% { background-position: 0% 50%; } 
+                50% { background-position: 100% 50%; } 
+            }
+            
+            @keyframes statusLinePulse { 
+                0%,100% { opacity: 0.7; } 
+                50% { opacity: 1; box-shadow: 0 0 25px rgba(0,255,255,0.4); } 
+            }
+            
+            @keyframes cardSlideIn { 
+                from { opacity: 0; transform: translateY(30px); } 
+                to { opacity: 1; transform: translateY(0); } 
+            }
+            
+            @keyframes rarityBorder { 
+                0%,100% { background-position: 0% 50%; } 
+                50% { background-position: 100% 50%; } 
+            }
+            
+            @keyframes ringRotate { 
+                from { transform: rotate(0deg); } 
+                to { transform: rotate(360deg); } 
+            }
+            
+            @keyframes particleFloat { 
+                0%,100% { transform: translateY(0) translateX(0); opacity: 0.9; } 
+                25% { transform: translateY(-12px) translateX(5px); opacity: 1; } 
+                50% { transform: translateY(0) translateX(8px); opacity: 0.9; } 
+                75% { transform: translateY(12px) translateX(5px); opacity: 0.5; } 
+            }
+            
+            @keyframes statusPulse { 
+                0%,100% { transform: scale(1); opacity: 1; } 
+                50% { transform: scale(1.4); opacity: 0.6; } 
+            }
+            
+            @keyframes modalPulse { 
+                0%,100% { box-shadow: 0 0 40px var(--modal-rarity-glow), inset 0 0 40px var(--modal-rarity-glow); } 
+                50% { box-shadow: 0 0 60px var(--modal-rarity-glow), inset 0 0 60px var(--modal-rarity-glow); } 
+            }
+            
+            @media (max-width: 768px) {
+                .achievement-system { padding: 20px 10px; }
+                .achievement-header h2 { font-size: 24px; }
+                .badge-grid-responsive { gap: 15px; }
+                .badge-card { flex: 0 1 250px; min-width: 220px; }
+                .badge-image-container { width: 75px; height: 75px; }
+                .badge-name { font-size: 14px; }
+                .badge-desc { font-size: 11px; }
+            }
+            
+            @media (max-width: 480px) {
+                .badge-card { flex: 0 1 100%; min-width: 100%; }
+            }
+            
+            @media (prefers-reduced-motion: reduce) {
+                .badge-card, .energy-ring, .particle, .status-dot,
+                .achievement-header h2, .badge-modal, .modal-energy-ring {
+                    animation: none !important;
+                    transition: none !important;
+                }
+                .badge-card:hover { transform: translateY(-5px); }
+                .badge-card:hover img { transform: scale(1.1); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    }
+    
+    // Generate HTML
+    grid.innerHTML = `
+        <div class="achievement-system">
+            <div class="achievement-header">
+                <h2>🌍 Globe Achievement System</h2>
+                <div class="subtitle">HOLOGRAPHIC DATABASE • INTERACTIVE</div>
+                <div class="system-status-line">SYSTEM ONLINE • CLICK CARD FOR DETAILS</div>
+            </div>
+            
+            <div class="badge-grid-responsive">
+                ${enhancedBadges.map((badge, index) => {
+                    const rarity = rarityConfig[badge.rarity];
+                    const particles = Array.from({length: rarity.particleCount}, (_, i) => `
+                        <div class="particle" 
+                             style="top: ${15 + i * 15}%; 
+                                    left: ${10 + i * 18}%; 
+                                    animation-delay: ${i * 0.5}s;
+                                    animation-duration: ${2 + i * 0.5}s;">
+                        </div>
+                    `).join('');
+                    
+                    return `
+                    <div class="badge-card ${badge.rarity === 'LEGENDARY' ? 'legendary-card' : ''}" 
+                         style="--rarity-color: ${rarity.color}; 
+                                --rarity-glow: ${rarity.glow};
+                                animation-delay: ${index * 0.1}s;"
+                         tabindex="0"
+                         role="button"
+                         aria-label="View details for ${badge.name}"
+                         data-index="${index}">
+                        
+                        <span class="status-dot"></span>
+                        
+                        <div class="badge-image-container">
+                            <div class="energy-ring"></div>
+                            <div class="energy-ring"></div>
+                            <img src="${badge.img}" 
+                                 alt="${badge.alt}" 
+                                 loading="lazy"
+                                 onload="this.style.display='block';"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div style="display:none; width:100%; height:100%; border-radius:50%; 
+                                        background: radial-gradient(circle, ${rarity.color}, #000); 
+                                        align-items:center; justify-content:center; font-size:30px;
+                                        border: 2px solid ${rarity.color};
+                                        box-shadow: 0 0 30px ${rarity.glow};">
+                                ⚛
+                            </div>
+                            ${particles}
+                        </div>
+                        
+                        <span class="badge-name">${badge.name}</span>
+                        <span class="badge-desc">${badge.desc}</span>
+                        
+                        <div class="progress-container">
+                            <span class="progress-label">${badge.progress}%</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${badge.progress}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+    `;
+    
+    // Remove old event listeners by cloning
+    const oldGrid = grid;
+    const newGrid = oldGrid.cloneNode(true);
+    oldGrid.parentNode.replaceChild(newGrid, oldGrid);
+    
+    // Event delegation on new grid
+    newGrid.addEventListener('mousemove', (e) => {
+        const card = e.target.closest('.badge-card');
+        if (!card) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = (y - centerY) / centerY * -8;
+        const rotateY = (x - centerX) / centerX * 8;
+        
+        card.style.transform = `translateY(-8px) scale(1.02) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+    
+    newGrid.addEventListener('mouseleave', (e) => {
+        const card = e.target.closest('.badge-card');
+        if (!card) return;
+        
+        card.style.transform = '';
+    });
+    
+    newGrid.addEventListener('click', (e) => {
+        const card = e.target.closest('.badge-card');
+        if (!card) return;
+        
+        const index = parseInt(card.getAttribute('data-index'));
+        openBadgeModal(enhancedBadges[index], rarityConfig);
+    });
+    
+    newGrid.addEventListener('keydown', (e) => {
+        const card = e.target.closest('.badge-card');
+        if (!card) return;
+        
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const index = parseInt(card.getAttribute('data-index'));
+            openBadgeModal(enhancedBadges[index], rarityConfig);
+        }
+    });
+    
+    // Progress bar animation on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bars = entry.target.querySelectorAll('.progress-fill');
+                bars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 100);
+                });
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    const system = newGrid.querySelector('.achievement-system');
+    if (system) observer.observe(system);
+}
+
+function toggleGlobeBadges() {
+    const section = document.getElementById("globe-badges-section");
+    if (!section) return;
+    
+    const isActive = section.classList.toggle("active");
+    
+    if (isActive) {
+        generateBadges();
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", generateBadges);
 </script>
 <body>
   <!-- ==================== MASTER AURORA — FINAL ULTIMATE EDITION ==================== -->
@@ -5043,7 +5837,9 @@
                 <a href="#resume">Resume</a>
                 <a href="#sms">SMS</a>
                 <a href="#contact">Contact</a>
-                <a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/1777658061108/single-media-viewer/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" class="nav-cta" target="_blank">📄 Resume</a>
+                <a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/1777658061108/single-media-viewer/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" class="nav-cta" target="_blank"><span style="width:28px;height:28px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.2),transparent);border:1.5px solid rgba(139,92,246,0.5);display:inline-flex;align-items:center;justify-content:center;">
+    <i class="fas fa-id-card" style="color:#8b5cf6;font-size:0.55rem;"></i>
+</span> Resume</a>
             </div>
             <div class="nav-actions">
                 <button class="nav-btn" id="themeBtn" title="20 Themes">🎨</button>
@@ -5077,9 +5873,13 @@
                     <div class="hero-stat"><div class="hero-stat-num" data-target="5">0</div><div class="hero-stat-label">Certificates</div></div>
                 </div>
                 <div class="btn-group">
-                    <a href="#projects" class="btn btn-primary">🚀 View Projects</a>
-                    <a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/1777658061108/single-media-viewer/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" class="btn btn-green" target="_blank">📄 View Resume</a>
-                    <a href="https://github.com/ashiqhussain-97" class="btn btn-outline" target="_blank">🐙 GitHub</a>
+                    <a href="#projects" class="btn btn-primary"><span style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(0,212,255,0.1));border:1px solid rgba(139,92,246,0.4);display:inline-flex;align-items:center;justify-content:center;">
+    <i class="fas fa-layer-group" style="color:#8b5cf6;font-size:0.6rem;"></i>
+</span> View Projects</a>
+                    <a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/1777658061108/single-media-viewer/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" class="btn btn-green" target="_blank"><span style="width:28px;height:28px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.2),transparent);border:1.5px solid rgba(139,92,246,0.5);display:inline-flex;align-items:center;justify-content:center;">
+    <i class="fas fa-id-card" style="color:#8b5cf6;font-size:0.55rem;"></i>
+</span> View Resume</a>
+                    <a href="https://github.com/ashiqhussain-97" class="btn btn-outline" target="_blank"><i class="fab fa-github" style="color:#fff;text-shadow:0 0 15px #fff,0 0 30px rgba(255,255,255,0.5);"></i> GitHub</a>
                 </div>
             </div>
             <div class="hero-visual">
@@ -5272,9 +6072,15 @@
                         <span style="background:rgba(124,58,237,.1);color:var(--purple);padding:5px 12px;border-radius:14px;font-size:.78rem;font-weight:600;border:1px solid rgba(124,58,237,.2);">200+ Hours</span>
                     </div>
                     <div style="margin-top:20px;padding:16px;background:rgba(0,0,0,0.15);border-radius:12px;border:1px solid var(--border)">
-                        <p style="font-size:0.8rem;color:var(--muted);font-family:var(--font-mono);">📍 Punjab, Pakistan</p>
-                        <p style="font-size:0.8rem;color:var(--muted);font-family:var(--font-mono);margin-top:4px;">📧 ashiqhussain97.kh@gmail.com</p>
-                        <p style="font-size:0.8rem;color:var(--muted);font-family:var(--font-mono);margin-top:4px;">📱 +92 328 0802773</p>
+                        <p style="font-size:0.95rem;color:var(--muted);font-family:var(--font-mono);"><span style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,68,68,0.1));border:1.5px solid rgba(255,107,53,0.5);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 15px rgba(255,107,53,0.2);margin-bottom:6px;">
+    <i class="fas fa-map-marker-alt" style="color:#ff6b35;font-size:0.65rem;"></i>
+</span> Punjab, Pakistan</p>
+                        <p style="font-size:0.95rem;color:var(--muted);font-family:var(--font-mono);margin-top:4px;"<span style="width:20px;height:20px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 15px rgba(255,68,68,0.2);margin-bottom:6px;">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" style="width:18px;height:18px;">
+</span> ashiqhussain97.kh@gmail.com</p>
+                        <p style="font-size:0.95rem;color:var(--muted);font-family:var(--font-mono);margin-top:4px;"><span style="width:20px;height:20px;border-radius:50%;background:#25D366;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 15px rgba(37,211,102,0.3);margin-bottom:6px;">
+    <i class="fab fa-whatsapp" style="color:#fff;font-size:0.75rem;"></i>
+</span> +92 328 0802773</p>
                     </div>
                 </div>
             </div>
@@ -5521,59 +6327,247 @@
     </div>
 </section>
 
-    <!-- PROJECTS -->
-    <section id="projects" class="section">
-        <div class="section-divider"></div>
-        <div class="container reveal">
-            <div class="section-header">
-                <span class="section-label">Work</span>
-                <h2 class="section-title">Featured Projects</h2>
-                <p class="section-subtitle">Each project represents a step in my learning journey.</p>
-            </div>
-            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="python">Python</button>
-                <button class="filter-btn" data-filter="tkinter">Tkinter</button>
-                <button class="filter-btn" data-filter="gui">GUI</button>
-            </div>
-            <div class="grid-3" id="projectGrid">
-                <div class="project-card project-item" data-tags="python system crud fileio">
-                    <div class="project-thumb" style="background:linear-gradient(135deg,#0a2218,#1a4a38);">📞<div class="overlay"><span>View Details</span></div></div>
-                    <div class="project-body">
-                        <h3>Contact Book</h3>
-                        <p>Full CRUD with persistent file storage, search & validation.</p>
-                        <div class="project-tech"><span>Python</span><span>CRUD</span><span>File I/O</span></div>
-                        <div class="project-links">
-                            <a href="https://github.com/ashiqhussain-97/Contact-Book-.git" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card project-item" data-tags="python tkinter gui">
-                    <div class="project-thumb" style="background:linear-gradient(135deg,#0a1a28,#1a3a58);">🕐<div class="overlay"><span>View Details</span></div></div>
-                    <div class="project-body">
-                        <h3>Digital Clock</h3>
-                        <p>Real-time clock with 12/24h toggle & clean Tkinter GUI.</p>
-                        <div class="project-tech"><span>Python</span><span>Tkinter</span><span>GUI</span></div>
-                        <div class="project-links">
-                            <a href="https://github.com/ashiqhussain-97/Digital-Clock.git" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card project-item" data-tags="python tkinter fileio">
-                    <div class="project-thumb" style="background:linear-gradient(135deg,#1a0a28,#3a1a58);">📝<div class="overlay"><span>View Details</span></div></div>
-                    <div class="project-body">
-                        <h3>Text Editor</h3>
-                        <p>Lightweight editor with shortcuts & file operations.</p>
-                        <div class="project-tech"><span>Python</span><span>Tkinter</span><span>File I/O</span></div>
-                        <div class="project-links">
-                            <a href="https://github.com/ashiqhussain-97/Simple-Text-Editor.git" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </script>
+<!-- ==================== PROJECTS — PROFESSIONAL ==================== -->
+<style>
+    @keyframes projectSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes projectSpinReverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+    @keyframes projectShine { 0% { left: -100%; } 100% { left: 200%; } }
+    @keyframes particleFloat { 0%,100% { transform: translateY(0) rotate(0deg); opacity:0.3; } 50% { transform: translateY(-15px) rotate(180deg); opacity:0.8; } }
+    @keyframes borderGlow { 0%,100% { border-color: rgba(0,212,255,0.3); } 50% { border-color: rgba(0,212,255,0.7); } }
+    
+    .project-card-advanced {
+        transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        background: rgba(8,15,35,0.9);
+        border: 1px solid rgba(0,212,255,0.3);
+        animation: borderGlow 4s ease-in-out infinite;
+    }
+    .project-card-advanced:hover {
+        transform: translateY(-12px) scale(1.03);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 80px rgba(0,212,255,0.3);
+    }
+    .project-thumb-advanced {
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.5s;
+    }
+    .project-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.4s;
+        backdrop-filter: blur(4px);
+    }
+    .project-card-advanced:hover .project-overlay { opacity: 1; }
+</style>
 
+<section id="projects" class="section">
+    <div class="section-divider"></div>
+    <div class="container reveal">
+        <div class="section-header">
+            <span class="section-label">Work</span>
+            <h2 class="section-title">Featured Projects</h2>
+            <p class="section-subtitle">Each project represents a step in my learning journey.</p>
+        </div>
+        
+        <!-- Filters -->
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;">
+            <button class="filter-btn active" data-filter="all" style="padding:8px 20px;border-radius:25px;">All</button>
+            <button class="filter-btn" data-filter="python"><i class="fab fa-python"></i> Python</button>
+            <button class="filter-btn" data-filter="tkinter"><i class="fas fa-laptop-code"></i> Tkinter</button>
+            <button class="filter-btn" data-filter="gui"><i class="fas fa-palette"></i> GUI</button>
+        </div>
+        
+        <!-- Projects Grid -->
+        <div class="grid-3" id="projectGrid" style="gap:25px;">
+            
+            <!-- ============ CONTACT BOOK ============ -->
+            <div class="project-card-advanced project-item" data-tags="python system crud fileio">
+                
+                <div style="position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,255,136,0.1),transparent);animation:projectShine 3s linear infinite;pointer-events:none;z-index:2;"></div>
+                
+                <span style="position:absolute;top:15%;left:10%;width:4px;height:4px;border-radius:50%;background:#00ff88;animation:particleFloat 3s infinite;z-index:1;"></span>
+                <span style="position:absolute;bottom:20%;right:15%;width:3px;height:3px;border-radius:50%;background:#00d4ff;animation:particleFloat 4s infinite 0.5s;z-index:1;"></span>
+                
+                <div style="position:absolute;top:15px;right:15px;z-index:5;background:rgba(0,255,136,0.2);border:1px solid rgba(0,255,136,0.5);padding:5px 12px;border-radius:15px;font-size:0.55rem;color:#00ff88;font-weight:800;">+100 XP</div>
+                <div style="position:absolute;top:15px;left:15px;z-index:5;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:15px;font-size:0.5rem;color:#fff;">LEVEL 1</div>
+                
+                <div class="project-thumb-advanced" style="background:linear-gradient(135deg,#0a2218,#1a4a38);">
+                    <span style="position:relative;width:80px;height:80px;display:inline-flex;align-items:center;justify-content:center;">
+                        <span style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(0,255,136,0.4);border-top:2px solid #00ff88;animation:projectSpin 3s infinite;"></span>
+                        <span style="position:absolute;inset:8px;border-radius:50%;border:1.5px dashed rgba(0,255,136,0.5);animation:projectSpinReverse 4s infinite;"></span>
+                        <span style="position:absolute;inset:16px;border-radius:50%;background:radial-gradient(circle,#1a3a28,#0a1a10);box-shadow:0 0 40px rgba(0,255,136,0.5);"></span>
+                        <i class="fas fa-address-book" style="position:relative;z-index:2;font-size:1.6rem;color:#00ff88;text-shadow:0 0 25px #00ff88;"></i>
+                    </span>
+                    <div class="project-overlay">
+                        <span style="color:#fff;font-size:0.7rem;font-weight:700;padding:10px 24px;border:1.5px solid rgba(255,255,255,0.5);border-radius:30px;"><i class="fas fa-eye"></i> VIEW DETAILS</span>
+                    </div>
+                </div>
+                
+                <div style="padding:22px 24px 26px;position:relative;z-index:3;">
+                    <h3 style="font-size:1.05rem;font-weight:800;color:#f0f4ff;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+                        <i class="fas fa-address-book" style="color:#00ff88;"></i> Contact Book
+                    </h3>
+                    <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:12px;">Full CRUD with persistent file storage, search & validation.</p>
+                    
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+                        <span style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.4);padding:5px 12px;border-radius:15px;font-size:0.6rem;color:#00ff88;"><i class="fab fa-python"></i> Python</span>
+                        <span style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.4);padding:5px 12px;border-radius:15px;font-size:0.6rem;color:#00d4ff;"><i class="fas fa-database"></i> CRUD</span>
+                        <span style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.4);padding:5px 12px;border-radius:15px;font-size:0.6rem;color:#8b5cf6;"><i class="fas fa-file"></i> File I/O</span>
+                    </div>
+                    
+                    <div style="display:flex;gap:8px;margin-bottom:14px;font-size:0.55rem;color:#94a3b8;">
+                        <span><i class="fas fa-check-circle" style="color:#00ff88;"></i> CRUD</span>
+                        <span><i class="fas fa-check-circle" style="color:#00ff88;"></i> Search</span>
+                        <span><i class="fas fa-check-circle" style="color:#00ff88;"></i> Validation</span>
+                    </div>
+                    
+                    <div style="margin-bottom:14px;">
+                        <div style="display:flex;justify-content:space-between;font-size:0.5rem;color:#94a3b8;margin-bottom:4px;">
+                            <span>COMPLETION</span><span style="color:#00ff88;">100%</span>
+                        </div>
+                        <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">
+                            <div style="height:100%;width:100%;background:linear-gradient(90deg,#00ff88,#00d4ff);border-radius:2px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex;gap:10px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);">
+                        <a href="https://github.com/ashiqhussain-97/Contact-Book-.git" target="_blank" style="flex:1;text-decoration:none;padding:10px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#e2e8f0;font-size:0.65rem;text-align:center;"><i class="fab fa-github"></i> GitHub</a>
+                        <a href="#" style="flex:1;text-decoration:none;padding:10px;border-radius:12px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:#00ff88;font-size:0.65rem;text-align:center;"><i class="fas fa-play"></i> Demo</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ============ DIGITAL CLOCK ============ -->
+            <div class="project-card-advanced project-item" data-tags="python tkinter gui">
+                
+                <div style="position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.1),transparent);animation:projectShine 3s linear infinite 0.5s;pointer-events:none;z-index:2;"></div>
+                
+                <div style="position:absolute;top:15px;right:15px;z-index:5;background:rgba(0,212,255,0.2);border:1px solid rgba(0,212,255,0.5);padding:5px 12px;border-radius:15px;font-size:0.55rem;color:#00d4ff;font-weight:800;">+80 XP</div>
+                <div style="position:absolute;top:15px;left:15px;z-index:5;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:15px;font-size:0.5rem;color:#fff;">LEVEL 1</div>
+                
+                <div class="project-thumb-advanced" style="background:linear-gradient(135deg,#0a1a28,#1a3a58);">
+                    <span style="position:relative;width:80px;height:80px;display:inline-flex;align-items:center;justify-content:center;">
+                        <span style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(0,212,255,0.4);border-top:2px solid #00d4ff;animation:projectSpin 3s infinite;"></span>
+                        <span style="position:absolute;inset:8px;border-radius:50%;border:1.5px dashed rgba(0,212,255,0.5);animation:projectSpinReverse 4s infinite;"></span>
+                        <span style="position:absolute;inset:16px;border-radius:50%;background:radial-gradient(circle,#1a2a3a,#0a1a28);box-shadow:0 0 40px rgba(0,212,255,0.5);"></span>
+                        <i class="fas fa-clock" style="position:relative;z-index:2;font-size:1.6rem;color:#00d4ff;text-shadow:0 0 25px #00d4ff;"></i>
+                    </span>
+                    <div class="project-overlay">
+                        <span style="color:#fff;font-size:0.7rem;padding:10px 24px;border:1.5px solid rgba(255,255,255,0.5);border-radius:30px;"><i class="fas fa-eye"></i> VIEW DETAILS</span>
+                    </div>
+                </div>
+                
+                <div style="padding:22px 24px 26px;">
+                    <h3 style="font-size:1.05rem;font-weight:800;color:#f0f4ff;margin-bottom:6px;"><i class="fas fa-clock" style="color:#00d4ff;"></i> Digital Clock</h3>
+                    <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:12px;">Real-time clock with 12/24h toggle & clean Tkinter GUI.</p>
+                    
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+                        <span style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.4);padding:5px 12px;border-radius:15px;font-size:0.6rem;color:#00ff88;"><i class="fab fa-python"></i> Python</span>
+                        <span style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.4);padding:5px 12px;border-radius:15px;font-size:0.6rem;color:#00d4ff;"><i class="fas fa-laptop-code"></i> Tkinter</span>
+                    </div>
+                    
+                    <div style="display:flex;gap:8px;margin-bottom:14px;font-size:0.55rem;color:#94a3b8;">
+                        <span><i class="fas fa-check-circle" style="color:#00d4ff;"></i> Real-time</span>
+                        <span><i class="fas fa-check-circle" style="color:#00d4ff;"></i> 12/24h</span>
+                    </div>
+                    
+                    <div style="margin-bottom:14px;">
+                        <div style="display:flex;justify-content:space-between;font-size:0.5rem;color:#94a3b8;margin-bottom:4px;"><span>COMPLETION</span><span style="color:#00d4ff;">100%</span></div>
+                        <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;"><div style="height:100%;width:100%;background:linear-gradient(90deg,#00d4ff,#8b5cf6);border-radius:2px;"></div></div>
+                    </div>
+                    
+                    <div style="display:flex;gap:10px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);">
+                        <a href="https://github.com/ashiqhussain-97/Digital-Clock.git" target="_blank" style="flex:1;text-decoration:none;padding:10px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#e2e8f0;font-size:0.65rem;text-align:center;"><i class="fab fa-github"></i> GitHub</a>
+                        <a href="#" style="flex:1;text-decoration:none;padding:10px;border-radius:12px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);color:#00d4ff;font-size:0.65rem;text-align:center;"><i class="fas fa-play"></i> Demo</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ============ TEXT EDITOR ============ -->
+            <div class="project-card-advanced project-item" data-tags="python tkinter fileio">
+                
+                <div style="position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(139,92,246,0.1),transparent);animation:projectShine 3s linear infinite 1s;pointer-events:none;z-index:2;"></div>
+                
+                <div style="position:absolute;top:15px;right:15px;z-index:5;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.5);padding:5px 12px;border-radius:15px;font-size:0.55rem;color:#8b5cf6;font-weight:800;">+120 XP</div>
+                <div style="position:absolute;top:15px;left:15px;z-index:5;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:15px;font-size:0.5rem;color:#fff;">LEVEL 2</div>
+                
+                <div class="project-thumb-advanced" style="background:linear-gradient(135deg,#1a0a28,#3a1a58);">
+                    <span style="position:relative;width:80px;height:80px;display:inline-flex;align-items:center;justify-content:center;">
+                        <span style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(139,92,246,0.4);border-top:2px solid #8b5cf6;animation:projectSpin 3s infinite;"></span>
+                        <span style="position:absolute;inset:8px;border-radius:50%;border:1.5px dashed rgba(139,92,246,0.5);animation:projectSpinReverse 4s infinite;"></span>
+                        <span style="position:absolute;inset:16px;border-radius:50%;background:radial-gradient(circle,#2a1a3a,#1a0a28);box-shadow:0 0 40px rgba(139,92,246,0.5);"></span>
+                        <i class="fas fa-edit" style="position:relative;z-index:2;font-size:1.6rem;color:#8b5cf6;text-shadow:0 0 25px #8b5cf6;"></i>
+                    </span>
+                    <div class="project-overlay">
+                        <span style="color:#fff;font-size:0.7rem;padding:10px 24px;border:1.5px solid rgba(255,255,255,0.5);border-radius:30px;"><i class="fas fa-eye"></i> VIEW DETAILS</span>
+                    </div>
+                </div>
+                
+                <div style="padding:22px 24px 26px;">
+                    <h3 style="font-size:1.05rem;font-weight:800;color:#f0f4ff;margin-bottom:6px;"><i class="fas fa-edit" style="color:#8b5cf6;"></i> Text Editor</h3>
+                    <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:12px;">Lightweight editor with shortcuts & file operations.</p>
+                    
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+                        <span style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.4);padding:5px 12px;border-radius:15px;font-size:0.6rem;color:#00ff88;"><i class="fab fa-python"></i> Python</span>
+                        <span style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.4);padding:5px 12px;border-radius:15px;font-size:0.6rem;color:#00d4ff;"><i class="fas fa-laptop-code"></i> Tkinter</span>
+                        <span style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.4);padding:5px 12px;border-radius:15px;font-size:0.6rem;color:#8b5cf6;"><i class="fas fa-file"></i> File I/O</span>
+                    </div>
+                    
+                    <div style="display:flex;gap:8px;margin-bottom:14px;font-size:0.55rem;color:#94a3b8;">
+                        <span><i class="fas fa-check-circle" style="color:#8b5cf6;"></i> Shortcuts</span>
+                        <span><i class="fas fa-check-circle" style="color:#8b5cf6;"></i> Save/Load</span>
+                    </div>
+                    
+                    <div style="margin-bottom:14px;">
+                        <div style="display:flex;justify-content:space-between;font-size:0.5rem;color:#94a3b8;margin-bottom:4px;"><span>COMPLETION</span><span style="color:#8b5cf6;">100%</span></div>
+                        <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;"><div style="height:100%;width:100%;background:linear-gradient(90deg,#8b5cf6,#00d4ff);border-radius:2px;"></div></div>
+                    </div>
+                    
+                    <div style="display:flex;gap:10px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);">
+                        <a href="https://github.com/ashiqhussain-97/Simple-Text-Editor.git" target="_blank" style="flex:1;text-decoration:none;padding:10px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#e2e8f0;font-size:0.65rem;text-align:center;"><i class="fab fa-github"></i> GitHub</a>
+                        <a href="#" style="flex:1;text-decoration:none;padding:10px;border-radius:12px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);color:#8b5cf6;font-size:0.65rem;text-align:center;"><i class="fas fa-play"></i> Demo</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const projects = document.querySelectorAll('.project-item');
+    
+    filterBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const filter = btn.getAttribute('data-filter');
+            projects.forEach(function(project) {
+                if (filter === 'all') {
+                    project.style.display = 'block';
+                } else {
+                    const tags = project.getAttribute('data-tags').split(' ');
+                    project.style.display = tags.includes(filter) ? 'block' : 'none';
+                }
+            });
+            filterBtns.forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+        });
+    });
+});
+</script>
     <!-- CERTIFICATES -->
     <section id="certificates" class="section">
         <div class="section-divider"></div>
@@ -5583,7 +6577,9 @@
                 <h2 class="section-title">Certificates</h2>
             </div>
             <div class="cert-scroll">
-                <div class="cert-card"><strong>🐍 Python</strong><br><span style="color:var(--muted);font-size:.78rem;">Simplilearn</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/146422482/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7rem;">🔗 View →</a></div>
+                <div class="cert-card"><strong><span style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(255,215,0,0.1));border:1px solid rgba(0,212,255,0.4);display:inline-flex;align-items:center;justify-content:center;">
+    <i class="fab fa-python" style="color:#00d4ff;font-size:0.6rem;"></i>
+</span> Python</strong><br><span style="color:var(--muted);font-size:.78rem;">Simplilearn</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/146422482/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7rem;">🔗 View →</a></div>
                 <div class="cert-card"><strong>💼 HP LIFE</strong><br><span style="color:var(--muted);font-size:.78rem;">Representation</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/2119829664/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7rem;">🔗 View →</a></div>
                 <div class="cert-card"><strong>⌨️ 48 WPM</strong><br><span style="color:var(--muted);font-size:.78rem;">Typing.com</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/559849615/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7rem;">🔗 View →</a></div>
                 <div class="cert-card"><strong>🎓 MindLuster</strong><br><span style="color:var(--muted);font-size:.78rem;">LinkedIn Skills</span><br><a href="https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/649597109/treasury/?profileId=ACoAAF0rmP0BJjITevqIXSZMAxpNlglEslHlv98" target="_blank" style="color:var(--cyan);font-size:.7rem;">🔗 View →</a></div>
@@ -5689,7 +6685,16 @@
             <!-- Repos Card -->
             <div class="card" style="text-align:center;padding:30px;min-width:160px;position:relative;overflow:hidden;cursor:pointer;" onmouseover="this.style.transform='translateY(-5px)';this.style.borderColor='#00d4ff';" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='';">
                 <div style="position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.05),transparent);animation:lightingRun 3s linear infinite;"></div>
-                <div style="font-size:2rem;margin-bottom:8px;">📁</div>
+                <div style="font-size:2rem;margin-bottom:8px;"><span style="width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#001a2a,#000a1a);border:2px solid #00d4ff;display:inline-flex;align-items:center;justify-content:center;animation:folderOpenPulse 2s infinite;">
+    <i class="fas fa-folder-open" style="color:#00d4ff;font-size:1.1rem;"></i>
+</span>
+
+<style>
+@keyframes folderOpenPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,212,255,0.3); }
+    50% { box-shadow: 0 0 50px rgba(0,212,255,0.7); }
+}
+</style></div>
                 <div id="gh-repos" style="font-size:1.8rem;font-weight:900;color:var(--cyan);font-family:JetBrains Mono,monospace;">3</div>
                 <div style="font-size:0.7rem;color:var(--muted);">REPOSITORIES</div>
             </div>
@@ -5697,7 +6702,9 @@
             <!-- Followers Card -->
             <div class="card" style="text-align:center;padding:30px;min-width:160px;position:relative;overflow:hidden;cursor:pointer;" onmouseover="this.style.transform='translateY(-5px)';this.style.borderColor='#00ff88';" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='';">
                 <div style="position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,255,136,0.05),transparent);animation:lightingRun 3s linear infinite;"></div>
-                <div style="font-size:2rem;margin-bottom:8px;">👥</div>
+                <div style="font-size:2rem;margin-bottom:8px;"><span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(139,92,246,0.1));border:2px solid rgba(0,212,255,0.5);display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkCyan 2s ease-in-out infinite;margin-bottom:8px;">
+    <i class="fas fa-users" style="color:#00d4ff;font-size:0.9rem;text-shadow:0 0 15px #00d4ff;"></i>
+</span></div>
                 <div id="gh-followers" style="font-size:1.8rem;font-weight:900;color:var(--green);font-family:JetBrains Mono,monospace;">0</div>
                 <div style="font-size:0.7rem;color:var(--muted);">FOLLOWERS</div>
             </div>
@@ -5713,7 +6720,16 @@
         <!-- Latest Repos -->
         <div style="max-width:500px;margin:20px auto;">
             <div style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;text-align:center;">
-                📁 Latest Repositories
+                <span style="width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#2a1a00,#1a0a00);border:2px solid #fbbf24;display:inline-flex;align-items:center;justify-content:center;animation:folderPulse 2s infinite;">
+    <i class="fas fa-folder" style="color:#fbbf24;font-size:1.1rem;"></i>
+</span>
+
+<style>
+@keyframes folderPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(251,191,36,0.3); }
+    50% { box-shadow: 0 0 50px rgba(251,191,36,0.7); }
+}
+</style> Latest Repositories
             </div>
             <div id="gh-repos-list">
                 <!-- JavaScript yahan latest repos load karega -->
@@ -5723,7 +6739,16 @@
         <!-- Button -->
         <p style="text-align:center;margin-top:20px;">
             <a href="https://github.com/ashiqhussain-97" target="_blank" class="btn btn-outline">
-                🐙 Visit GitHub Profile
+                <span style="width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#24292e,#000);border:2px solid #fff;display:inline-flex;align-items:center;justify-content:center;animation:githubPulse 2s infinite;">
+    <i class="fab fa-github" style="color:#fff;font-size:1.1rem;"></i>
+</span>
+
+<style>
+@keyframes githubPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+    50% { box-shadow: 0 0 50px rgba(255,255,255,0.7); }
+}
+</style>Visit GitHub Profile
             </a>
         </p>
     </div>
@@ -5791,7 +6816,7 @@
                         
                         <!-- Education -->
                         <div style="margin-bottom:16px;padding:14px;background:rgba(255,255,255,0.02);border-radius:10px;border-left:3px solid #00d4ff;">
-                            <div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[EDUCATION]</div>
+                            <div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[EDUCATION]</div>
                             <div style="font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#94a3b8;line-height:1.6;">
                                 🎓 Matriculation (SSC) — 90%<br>
                                 🎓 F.Sc Pre-Engineering — 77%
@@ -5800,9 +6825,11 @@
                         
                         <!-- Skills -->
                         <div style="margin-bottom:16px;padding:14px;background:rgba(255,255,255,0.02);border-radius:10px;border-left:3px solid #00ff88;">
-                            <div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[SKILLS]</div>
+                            <div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[SKILLS]</div>
                             <div style="font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#94a3b8;line-height:1.6;">
-                                🐍 Python Programming<br>
+                                <span style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(255,215,0,0.1));border:1px solid rgba(0,212,255,0.4);display:inline-flex;align-items:center;justify-content:center;">
+    <i class="fab fa-python" style="color:#00d4ff;font-size:0.6rem;"></i>
+</span> Python Programming<br>
                                 🖥️ Tkinter GUI<br>
                                 📝 Problem Solving<br>
                                 🌍 English (IELTS 6.0)<br>
@@ -5812,7 +6839,7 @@
                         
                         <!-- Projects -->
                         <div style="margin-bottom:16px;padding:14px;background:rgba(255,255,255,0.02);border-radius:10px;border-left:3px solid #fbbf24;">
-                            <div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[PROJECTS]</div>
+                            <div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[PROJECTS]</div>
                             <div style="font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#94a3b8;line-height:1.6;">
                                 📞 Contact Book<br>
                                 🕐 Digital Clock<br>
@@ -5822,7 +6849,7 @@
                         
                         <!-- Certificates -->
                         <div style="margin-bottom:16px;padding:14px;background:rgba(255,255,255,0.02);border-radius:10px;border-left:3px solid #b388ff;">
-                            <div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[CERTIFICATES]</div>
+                            <div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[CERTIFICATES]</div>
                             <div style="font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#94a3b8;line-height:1.6;">
                                 📜 Python — Simplilearn<br>
                                 📜 HP LIFE<br>
@@ -5833,12 +6860,12 @@
                         
                         <!-- Contact -->
                         <div style="padding:14px;background:rgba(255,255,255,0.02);border-radius:10px;border-left:3px solid #ff6b35;">
-                            <div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[CONTACT]</div>
+                            <div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:700;color:#f0f4ff;margin-bottom:6px;">[CONTACT]</div>
                             <div style="font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#94a3b8;line-height:1.6;">
                                 📧 ashiqhussain97.kh@gmail.com<br>
                                 📱 +92 328 0802773<br>
                                 🔗 linkedin.com/in/ashiq-hussain97<br>
-                                🐙 github.com/ashiqhussain-97
+                                <i class="fab fa-github" style="color:#fff;text-shadow:0 0 15px #fff,0 0 30px rgba(255,255,255,0.5);"></i> github.com/ashiqhussain-97
                             </div>
                         </div>
                         
@@ -5869,11 +6896,31 @@
                 <h2 class="section-title">Get In Touch</h2>
             </div>
             <div class="contact-grid">
-                <div class="contact-card card"><div class="contact-icon">📧</div><strong>Email</strong><br><a href="mailto:ashiqhussain97.kh@gmail.com">ashiqhussain97.kh@gmail.com</a></div>
-                <div class="contact-card card"><div class="contact-icon">📱</div><strong>Phone</strong><br><span>+92 328 0802773</span></div>
-                <div class="contact-card card"><div class="contact-icon">🔗</div><strong>LinkedIn</strong><br><a href="https://www.linkedin.com/in/ashiq-hussain97/" target="_blank">ashiq-hussain97</a></div>
-                <div class="contact-card card"><div class="contact-icon">🐙</div><strong>GitHub</strong><br><a href="https://github.com/ashiqhussain-97" target="_blank">ashiqhussain-97</a></div>
-                <div class="contact-card card"><div class="contact-icon">📍</div><strong>Location</strong><br><span>Punjab, Pakistan</span></div>
+                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkRed 2s ease-in-out infinite;margin-bottom:8px;">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" style="width:24px;height:24px;">
+</span><box-></div><strong>Email</strong><br><a href="mailto:ashiqhussain97.kh@gmail.com">ashiqhussain97.kh@gmail.com</a></div>
+                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:#25D366;display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkWhatsApp 2s ease-in-out infinite;margin-bottom:8px;">
+    <i class="fab fa-whatsapp" style="color:#fff;font-size:1.1rem;"></i>
+</span>
+</span></div><strong>Phone</strong><br><span>+92 328 0802773</span></div>
+                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:#0077B5;display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkBlue 2s ease-in-out infinite;margin-bottom:8px;">
+    <i class="fab fa-linkedin-in" style="color:#fff;font-size:1rem;"></i>
+</span>
+                </div><strong>LinkedIn</strong><br><a href="https://www.linkedin.com/in/ashiq-hussain97/" target="_blank">ashiq-hussain97</a></div>
+                <div class="contact-card card"><div class="contact-icon"><span style="width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#24292e,#000);border:2px solid #fff;display:inline-flex;align-items:center;justify-content:center;animation:githubPulse 2s infinite;">
+    <i class="fab fa-github" style="color:#fff;font-size:1.1rem;"></i>
+</span>
+
+<style>
+@keyframes githubPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+    50% { box-shadow: 0 0 50px rgba(255,255,255,0.7); }
+}
+</style></div><strong>GitHub</strong><br><a href="https://github.com/ashiqhussain-97" target="_blank">ashiqhussain-97</a></div>
+                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,68,68,0.1));border:2px solid rgba(255,107,53,0.5);display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkOrange 2s ease-in-out infinite;margin-bottom:8px;">
+    <i class="fas fa-map-marker-alt" style="color:#ff6b35;font-size:0.9rem;text-shadow:0 0 15px #ff6b35;"></i>
+</span>
+</span></div><strong>Location</strong><br><span>Punjab, Pakistan</span></div>
             </div>
         </div>
     </section>
@@ -5926,7 +6973,9 @@
         <span class="chat-chip" data-q="Ashiq ke projects batao">💼 Projects</span>
         <span class="chat-chip" data-q="Ashiq ki skills kya hain">🛠️ Skills</span>
         <span class="chat-chip" data-q="Ashiq ki education">🎓 Education</span>
-        <span class="chat-chip" data-q="Open resume">📄 Resume</span>
+        <span class="chat-chip" data-q="Open resume"><span style="width:28px;height:28px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.2),transparent);border:1.5px solid rgba(139,92,246,0.5);display:inline-flex;align-items:center;justify-content:center;">
+    <i class="fas fa-id-card" style="color:#8b5cf6;font-size:0.55rem;"></i>
+</span> Resume</span>
         <span class="chat-chip" data-q="Theme change karo">🎨 Theme</span>
         <span class="chat-chip" data-q="Joke sunao">😄 Joke</span>
         <span class="chat-chip" data-q="Ashiq ke goals">🎯 Goals</span>
@@ -7672,7 +8721,7 @@
     // ============ CATEGORY DATA (SAME) ============
     const categories = [{
         title: 'Core Programming',
-        icon: '🐍',
+        icon: '<span style="width:35px;height:35px;border-radius:8px;background:linear-gradient(135deg,rgba(55,118,171,0.2),rgba(255,212,59,0.1));border:1px solid rgba(55,118,171,0.5);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(55,118,171,0.3);"><i class="fab fa-python" style="color:#3776AB;font-size:0.95rem;"></i></span>',
         desc: 'Python and software development fundamentals.',
         nodes: [
             { name: 'Python Programming', level: 40, hours: 60,
@@ -7850,7 +8899,7 @@
                 const status = getStatusColor(node.level);
                 const btn = document.createElement('button');
                 btn.className = 'skill-node-btn';
-                btn.style.cssText = 'width:100%;padding:14px 16px;background:rgba(0,0,0,0.3);border:1px solid ' + status.border + ';border-radius:12px;color:#e2e8f0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:Inter,sans-serif;font-size:0.8rem;transition:all 0.3s;margin-top:8px;position:relative;overflow:hidden;box-shadow:' + status.glow + ';animation:nodeGlow 3s ease infinite;';
+                btn.style.cssText = 'width:100%;padding:14px 16px;background:rgba(0,0,0,0.3);border:1px solid ' + status.border + ';border-radius:12px;color:#e2e8f0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:Inter,sans-serif;font-size:0.95rem;transition:all 0.3s;margin-top:8px;position:relative;overflow:hidden;box-shadow:' + status.glow + ';animation:nodeGlow 3s ease infinite;';
                 
                 btn.innerHTML = 
                     '<span style="display:flex;align-items:center;gap:8px;">' +
@@ -7861,7 +8910,7 @@
                 
                 // Neon corner glow
                 const glowCorner = document.createElement('div');
-                glowCorner.style.cssText = 'position:absolute;width:50px;height:50px;border-radius:50%;background:radial-gradient(circle,' + status.color + '30 0%, transparent 70%);top:-20px;right:-20px;pointer-events:none;';
+                glowCorner.style.cssText = 'position:absolute;width:65px;height:65px;border-radius:50%;background:radial-gradient(circle,' + status.color + '30 0%, transparent 70%);top:-20px;right:-20px;pointer-events:none;';
                 btn.appendChild(glowCorner);
                 
                 // Hover
@@ -7944,7 +8993,7 @@
                         '<circle cx="30" cy="30" r="26" style="fill:none;stroke:rgba(255,255,255,0.06);stroke-width:4;" />' +
                         '<circle cx="30" cy="30" r="26" style="fill:none;stroke:' + status.color + ';stroke-width:4;stroke-linecap:round;stroke-dasharray:' + circumference + ';stroke-dashoffset:' + offset + ';transition:stroke-dashoffset 1.5s cubic-bezier(0.22,1,0.36,1);filter:drop-shadow(0 0 12px ' + status.color + ');" />' +
                     '</svg>' +
-                    '<span style="font-family:JetBrains Mono,monospace;font-size:0.8rem;font-weight:800;color:#f0f4ff;position:absolute;text-shadow:0 0 10px ' + status.color + ';">' + node.level + '%</span>' +
+                    '<span style="font-family:JetBrains Mono,monospace;font-size:0.95rem;font-weight:800;color:#f0f4ff;position:absolute;text-shadow:0 0 10px ' + status.color + ';">' + node.level + '%</span>' +
                 '</div>' +
                 '<div>' +
                     '<div style="font-family:Syne,sans-serif;font-size:1.2rem;font-weight:800;color:#f0f4ff;letter-spacing:0.5px;">' + node.name + '</div>' +
@@ -7957,7 +9006,7 @@
             '</div>' +
             '<div style="background:' + status.bg + ';border:1px solid ' + status.border + ';border-radius:12px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden;">' +
                 '<span style="position:absolute;top:0;left:-100%;width:30%;height:100%;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);animation:lightingRun 3s linear infinite;"></span>' +
-                '<div style="font-size:0.8rem;color:#e2e8f0;line-height:1.6;">' + node.desc + '</div>' +
+                '<div style="font-size:0.95rem;color:#e2e8f0;line-height:1.6;">' + node.desc + '</div>' +
             '</div>' +
             '<div style="background:rgba(0,212,255,0.03);border-left:3px solid ' + status.color + ';border-radius:0 12px 12px 0;padding:14px;margin-bottom:16px;">' +
                 '<div style="font-size:0.7rem;color:#94a3b8;font-style:italic;">"' + node.useCase + '"</div>' +
@@ -10066,6 +11115,35 @@
         font-size: 0.5rem;
     }
 }
+@keyframes neonBlinkRed {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,68,68,0.3), 0 0 40px rgba(255,68,68,0.15); }
+    50% { box-shadow: 0 0 80px rgba(255,68,68,1), 0 0 150px rgba(255,68,68,0.6), 0 0 250px rgba(255,68,68,0.3); }
+}
+
+@keyframes neonBlinkGreen {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,255,136,0.3), 0 0 40px rgba(0,255,136,0.15); }
+    50% { box-shadow: 0 0 80px rgba(0,255,136,1), 0 0 150px rgba(0,255,136,0.6), 0 0 250px rgba(0,255,136,0.3); }
+}
+
+@keyframes neonBlinkBlue {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,119,181,0.3), 0 0 40px rgba(0,119,181,0.15); }
+    50% { box-shadow: 0 0 80px rgba(0,119,181,1), 0 0 150px rgba(0,119,181,0.6), 0 0 250px rgba(0,119,181,0.3); }
+}
+
+@keyframes neonBlinkWhite {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.15); }
+    50% { box-shadow: 0 0 80px rgba(255,255,255,1), 0 0 150px rgba(255,255,255,0.5), 0 0 250px rgba(255,255,255,0.2); }
+}
+
+@keyframes neonBlinkOrange {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,107,53,0.3), 0 0 40px rgba(255,107,53,0.15); }
+    50% { box-shadow: 0 0 80px rgba(255,107,53,1), 0 0 150px rgba(255,107,53,0.6), 0 0 250px rgba(255,107,53,0.3); }
+}
+
+@keyframes neonBlinkWhatsApp {
+    0%, 100% { box-shadow: 0 0 20px rgba(37,211,102,0.3), 0 0 40px rgba(37,211,102,0.15); }
+    50% { box-shadow: 0 0 80px rgba(37,211,102,1), 0 0 150px rgba(37,211,102,0.6), 0 0 250px rgba(37,211,102,0.3); }
+}
 </style>
 
 <script>
@@ -10668,7 +11746,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Architecture
                 '<div style="margin-bottom:24px;">' +
                     '<div style="font-size:0.75rem;font-weight:700;color:#f0f4ff;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px;">ARCHITECTURE<span style="flex:1;height:1px;background:rgba(0,212,255,0.15);"></span></div>' +
-                    '<div style="background:rgba(0,0,0,0.4);border:1px solid rgba(0,212,255,0.15);border-radius:12px;padding:20px;font-family:JetBrains Mono,monospace;font-size:0.8rem;line-height:1.8;color:#e2e8f0;overflow-x:auto;white-space:pre;">' + project.architecture + '</div>' +
+                    '<div style="background:rgba(0,0,0,0.4);border:1px solid rgba(0,212,255,0.15);border-radius:12px;padding:20px;font-family:JetBrains Mono,monospace;font-size:0.95rem;line-height:1.8;color:#e2e8f0;overflow-x:auto;white-space:pre;">' + project.architecture + '</div>' +
                 '</div>' +
                 
                 // Actions
@@ -10742,7 +11820,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 '<div class="flip-inner" style="position:relative;width:100%;height:100%;transition:transform 0.6s;transform-style:preserve-3d;">' +
                     '<div class="flip-front" style="position:absolute;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;overflow:hidden;border:1px solid rgba(0,212,255,0.2);background:rgba(10,18,40,0.9);z-index:2;">' +
                         originalHTML +
-                        '<div style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.4);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#00d4ff;">🔄</div>' +
+                        '<div style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.4);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.95rem;color:#00d4ff;">🔄</div>' +
                     '</div>' +
                     '<div class="flip-back" style="position:absolute;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;overflow:hidden;border:1px solid rgba(0,212,255,0.4);background:rgba(10,18,40,0.98);transform:rotateY(180deg);display:flex;flex-direction:column;">' +
                         '<div style="padding:20px;height:100%;display:flex;flex-direction:column;">' +
@@ -10814,17 +11892,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('🏆 Achievement System Loading...');
     
-    // ============ ACHIEVEMENTS DATA ============
-    const achievements = [
-        { id: 'first-project', icon: '⚡', title: 'First Project', desc: 'Built your first Python project', rarity: 'COMMON', color: '#00d4ff', unlocked: true },
-        { id: 'python-initiated', icon: '🐍', title: 'Python Initiated', desc: 'Started Python programming journey', rarity: 'COMMON', color: '#00ff88', unlocked: true },
-        { id: 'academic-milestone', icon: '🎓', title: 'Academic Milestone', desc: 'Scored 90% in Matriculation', rarity: 'RARE', color: '#fbbf24', unlocked: true },
-        { id: 'typing-milestone', icon: '⌨️', title: 'Typing Milestone', desc: 'Achieved 53 WPM typing speed', rarity: 'RARE', color: '#fbbf24', unlocked: true },
-        { id: 'german-journey', icon: '🇩🇪', title: 'German Journey', desc: 'Reached A2 level in German', rarity: 'EPIC', color: '#b388ff', unlocked: true },
-        { id: 'portfolio-builder', icon: '🚀', title: 'Portfolio Builder', desc: 'Created this amazing portfolio', rarity: 'EPIC', color: '#b388ff', unlocked: true },
-        { id: 'system-explorer', icon: '🌌', title: 'System Explorer', desc: 'Explored all portfolio features', rarity: 'LEGENDARY', color: '#ff6b35', unlocked: true },
-        { id: 'theme-master', icon: '🎨', title: 'Theme Master', desc: 'Tried all 20 themes', rarity: 'LEGENDARY', color: '#ff6b35', unlocked: true }
-    ];
+    
     
     // ============ POPULATE GRID ============
     function populateAchievements() {
@@ -10906,7 +11974,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 '<div style="position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg, transparent, ' + color + '30, transparent);animation:lightingRun 2s linear infinite;"></div>' +
                 '<div style="position:relative;z-index:1;">' +
                     '<div style="font-size:5rem;margin-bottom:20px;animation:achievementIcon 1s;">' + ach.icon + '</div>' +
-                    '<div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:700;color:' + color + ';letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;">Achievement Unlocked</div>' +
+                    '<div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:700;color:' + color + ';letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;">Achievement Unlocked</div>' +
                     '<div style="font-family:Syne,sans-serif;font-size:1.8rem;font-weight:900;color:#f0f4ff;letter-spacing:1px;margin-bottom:8px;text-shadow:0 0 30px ' + color + ';">' + ach.title + '</div>' +
                     '<div style="font-family:JetBrains Mono,monospace;font-size:0.7rem;color:' + color + ';letter-spacing:3px;margin-bottom:16px;">' + ach.rarity + '</div>' +
                     '<div style="font-size:0.9rem;color:#94a3b8;margin-bottom:24px;">' + ach.desc + '</div>' +
@@ -10957,7 +12025,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Python Development',
             desc: 'Started Python journey, built 3 desktop applications.',
             status: 'COMPLETED',
-            icon: '🐍',
+            icon: '<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" style="width:32px;height:32px;">',
             color: '#00ff88'
         },
         {
@@ -10965,7 +12033,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Portfolio v11',
             desc: 'Upgraded portfolio with premium features and gesture control.',
             status: 'ACTIVE',
-            icon: '🚀',
+            icon: '<span style="width:45px;height:45px;border-radius:10px;background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,68,68,0.1));border:1px solid rgba(255,107,53,0.4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(255,107,53,0.2);">',
             color: '#00d4ff'
         },
         {
@@ -11115,7 +12183,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Education
         html += '<div style="margin-bottom:16px;padding:16px;background:rgba(255,255,255,0.02);border-radius:12px;border-left:3px solid #00d4ff;">';
-        html += '<div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">🎓 EDUCATION</div>';
+        html += '<div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">🎓 EDUCATION</div>';
         resumeData.education.forEach(function(edu) {
             html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);">';
             html += '<span style="font-size:1.2rem;">' + edu.icon + '</span>';
@@ -11130,7 +12198,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Skills
         html += '<div style="margin-bottom:16px;padding:16px;background:rgba(255,255,255,0.02);border-radius:12px;border-left:3px solid #00ff88;">';
-        html += '<div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">🛠️ SKILLS</div>';
+        html += '<div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">🛠️ SKILLS</div>';
         resumeData.skills.forEach(function(skill) {
             html += '<div style="margin-bottom:10px;">';
             html += '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">';
@@ -11145,7 +12213,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Projects
         html += '<div style="margin-bottom:16px;padding:16px;background:rgba(255,255,255,0.02);border-radius:12px;border-left:3px solid #fbbf24;">';
-        html += '<div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">📁 PROJECTS</div>';
+        html += '<div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">📁 PROJECTS</div>';
         resumeData.projects.forEach(function(proj) {
             html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);">';
             html += '<span style="font-size:1.2rem;">' + proj.icon + '</span>';
@@ -11160,7 +12228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Certificates
         html += '<div style="margin-bottom:16px;padding:16px;background:rgba(255,255,255,0.02);border-radius:12px;border-left:3px solid #b388ff;">';
-        html += '<div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">📜 CERTIFICATES</div>';
+        html += '<div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">📜 CERTIFICATES</div>';
         resumeData.certificates.forEach(function(cert) {
             html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);">';
             html += '<span style="font-size:1.2rem;">' + cert.icon + '</span>';
@@ -11172,7 +12240,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Contact
         html += '<div style="padding:16px;background:rgba(255,255,255,0.02);border-radius:12px;border-left:3px solid #ff6b35;">';
-        html += '<div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">📞 CONTACT</div>';
+        html += '<div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:800;color:#f0f4ff;margin-bottom:10px;">📞 CONTACT</div>';
         html += '<div style="font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#94a3b8;line-height:1.8;">';
         html += '📧 <a href="mailto:ashiqhussain97.kh@gmail.com" style="color:#e2e8f0;text-decoration:none;">ashiqhussain97.kh@gmail.com</a><br>';
         html += '📱 <span style="color:#e2e8f0;">+92 328 0802773</span><br>';
@@ -11244,7 +12312,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============ CERTIFICATES DATA ============
     const certificatesData = [
         {
-            icon: '🐍',
+            icon: '<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" style="width:32px;height:32px;">',
             title: 'Python',
             org: 'Simplilearn',
             date: '2026',
@@ -11252,7 +12320,7 @@ document.addEventListener('DOMContentLoaded', function() {
             link: 'https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/146422482/treasury/'
         },
         {
-            icon: '💼',
+            icon:'<span style="font-size:1.2rem;font-weight:900;color:#0096D6;">hp</span>',
             title: 'HP LIFE',
             org: 'Representation',
             date: '2026',
@@ -11260,7 +12328,7 @@ document.addEventListener('DOMContentLoaded', function() {
             link: 'https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/2119829664/treasury/'
         },
         {
-            icon: '⌨️',
+            icon:  '<span style="font-size:1rem;">⌨️</span>',
             title: 'Typing 48 WPM',
             org: 'Typing.com',
             date: '2026',
@@ -11268,7 +12336,7 @@ document.addEventListener('DOMContentLoaded', function() {
             link: 'https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/559849615/treasury/'
         },
         {
-            icon: '🎓',
+            icon:  '<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" style="width:28px;height:28px;">',
             title: 'MindLuster',
             org: 'LinkedIn Skills',
             date: '2026',
@@ -11276,15 +12344,14 @@ document.addEventListener('DOMContentLoaded', function() {
             link: 'https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/649597109/treasury/'
         },
         {
-            icon: '🌍',
-            title: 'IELTS 6.0',
+            icon: '<span style="font-weight:900;color:#C8102E;font-size:0.7rem;">IELTS</span>',
             org: 'English',
             date: '2026',
             color: '#ff6b35',
             link: 'https://www.linkedin.com/in/ashiq-hussain97/overlay/Certifications/493002627/treasury/'
         },
         {
-            icon: '🌐',
+            icon: '<span style="font-size:1.2rem;">🌍</span>',
             title: 'GLOBE Observer',
             org: '5 Protocol Badges',
             date: 'July 21, 2026',
@@ -11319,7 +12386,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 '<div style="font-size:2.5rem;margin-bottom:10px;display:inline-block;animation:certIconFloat 3s ease-in-out infinite;animation-delay:' + (index * 0.2) + 's;filter:drop-shadow(0 0 15px ' + cert.color + ');">' + cert.icon + '</div>' +
                 
                 // Title
-                '<div style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:800;color:#f0f4ff;letter-spacing:0.5px;margin-bottom:4px;">' + cert.title + '</div>' +
+                '<div style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:800;color:#f0f4ff;letter-spacing:0.5px;margin-bottom:4px;">' + cert.title + '</div>' +
                 
                 // Org
                 '<div style="font-size:0.6rem;color:#94a3b8;font-family:JetBrains Mono,monospace;margin-bottom:4px;">' + cert.org + '</div>' +
@@ -11579,7 +12646,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         panel.innerHTML = 
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
-                '<span style="font-family:Syne,sans-serif;font-size:0.8rem;font-weight:800;color:#f0f4ff;">🎧 AUDIO SYSTEM</span>' +
+                '<span style="font-family:Syne,sans-serif;font-size:0.95rem;font-weight:800;color:#f0f4ff;">🎧 AUDIO SYSTEM</span>' +
                 '<button onclick="toggleAudioPanel()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:0.9rem;">✕</button>' +
             '</div>' +
             
@@ -12103,7 +13170,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const btn = document.createElement('button');
         btn.id = 'analyticsBtn';
-        btn.style.cssText = 'position:fixed;top:24px;right:16px;z-index:1002;background:rgba(5,10,25,0.9);border:1px solid rgba(0,212,255,0.3);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;cursor:pointer;backdrop-filter:blur(12px);transition:all 0.3s ease;box-shadow:0 4px 15px rgba(0,0,0,0.3);';
+        btn.style.cssText = 'position:fixed;top:24px;right:16px;z-index:1002;background:rgba(5,10,25,0.9);border:1px solid rgba(0,212,255,0.3);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:0.95rem;cursor:pointer;backdrop-filter:blur(12px);transition:all 0.3s ease;box-shadow:0 4px 15px rgba(0,0,0,0.3);';
         btn.innerHTML = '📊';
         btn.title = 'Analytics';
         btn.setAttribute('aria-label', 'View Analytics');
@@ -12141,7 +13208,7 @@ document.addEventListener('DOMContentLoaded', function() {
             display.innerHTML = 
                 '<div style="font-family:Syne,sans-serif;font-size:0.7rem;font-weight:800;color:#f0f4ff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">' +
                     '<span>📊 ANALYTICS</span>' +
-                    '<button onclick="closeAnalytics()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:0.8rem;">✕</button>' +
+                    '<button onclick="closeAnalytics()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:0.95rem;">✕</button>' +
                 '</div>' +
                 '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.55rem;font-family:JetBrains Mono,monospace;">' +
                     '<div style="padding:8px;background:rgba(0,212,255,0.05);border-radius:6px;">' +
@@ -12987,6 +14054,315 @@ document.addEventListener('DOMContentLoaded', function() {
         renderTools();
         console.log('🛠️ Tools Section Ready');
     }, 500);
+});
+</script>
+<style>
+    @keyframes cardFloatGlow {
+        0%, 100% { 
+            transform: translateY(0);
+            box-shadow: 0 0 20px rgba(0,212,255,0.15);
+        }
+        25% {
+            transform: translateY(-6px);
+            box-shadow: 0 0 35px rgba(0,212,255,0.3);
+        }
+        50% {
+            transform: translateY(-10px);
+            box-shadow: 0 0 50px rgba(0,212,255,0.45);
+        }
+        75% {
+            transform: translateY(-4px);
+            box-shadow: 0 0 30px rgba(0,212,255,0.25);
+        }
+    }
+    
+    @keyframes achSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes burstFly {
+        0% { transform: translate(0, 0) scale(1); opacity: 1; }
+        100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+    
+    @keyframes legendaryBorder {
+        0%, 100% { border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+        25% { border-color: #ff6b35; box-shadow: 0 0 40px rgba(255,107,53,0.5); }
+        50% { border-color: #00d4ff; box-shadow: 0 0 40px rgba(0,212,255,0.5); }
+        75% { border-color: #8b5cf6; box-shadow: 0 0 40px rgba(139,92,246,0.5); }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    'use strict';
+    
+    console.log('🏆 Achievement System — Float & Glow Ready!');
+    
+    // Audio
+    let audioCtx = null;
+    function playSound(freq, dur, vol) {
+        try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + dur);
+        } catch(e) {}
+    }
+    
+    function playOpenSound() {
+        playSound(400, 0.15, 0.08);
+        setTimeout(() => playSound(600, 0.2, 0.08), 100);
+        setTimeout(() => playSound(800, 0.3, 0.1), 200);
+    }
+    
+    function particleBurst(color) {
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('span');
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 50 + Math.random() * 80;
+            particle.style.cssText = 'position:fixed;width:6px;height:6px;border-radius:50%;background:' + color + ';pointer-events:none;z-index:999999;box-shadow:0 0 15px ' + color + ';';
+            particle.style.left = (window.innerWidth / 2) + 'px';
+            particle.style.top = (window.innerHeight / 2) + 'px';
+            particle.style.animation = 'burstFly 0.8s ease-out forwards';
+            particle.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+            particle.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 800);
+        }
+    }
+    
+    const achievements = [
+        {
+            id: 'first-project',
+            icon: '<i class="fas fa-flag" style="color:#3776AB;font-size:2.2rem;"></i>',
+            smallIcon: '<span style="width:65px;height:65px;border-radius:12px;background:linear-gradient(135deg,rgba(55,118,171,0.15),rgba(255,212,59,0.1));border:2px solid rgba(55,118,171,0.4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(55,118,171,0.3);"><i class="fas fa-flag" style="color:#3776AB;font-size:1.2rem;"></i></span>',
+            title: 'First Project',
+            desc: 'Built your first Python project',
+            rarity: 'COMMON',
+            color: '#3776AB',
+            xp: 50,
+            date: 'Jan 2026',
+            features: ['Contact Book', 'File Storage', 'CRUD App'],
+            detail: 'Built Contact Book — a full CRUD application with persistent file storage.',
+            journey: ['Week 1: Python basics', 'Week 2: File operations', 'Week 3: Built app', 'Week 4: Tested']
+        },
+        {
+            id: 'python-initiated',
+            icon: '<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" style="width:65px;height:65px;">',
+            smallIcon: '<span style="width:65px;height:65px;border-radius:12px;background:linear-gradient(135deg,rgba(55,118,171,0.15),rgba(255,212,59,0.1));border:2px solid rgba(55,118,171,0.4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(55,118,171,0.3);"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" style="width:30px;height:30px;"></span>',
+            title: 'Python Initiated',
+            desc: 'Started Python programming',
+            rarity: 'COMMON',
+            color: '#3776AB',
+            xp: 50,
+            date: 'Feb 2026',
+            features: ['Variables', 'Loops', 'Functions'],
+            detail: 'Mastered Python fundamentals — data types, control flow, functions.',
+            journey: ['Day 1: Hello World', 'Day 15: Loops', 'Day 30: Functions']
+        },
+        {
+            id: 'academic-milestone',
+            icon: '<i class="fas fa-graduation-cap" style="color:#8b5cf6;font-size:2.2rem;"></i>',
+            smallIcon: '<span style="width:65px;height:65px;border-radius:12px;background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(0,212,255,0.1));border:2px solid rgba(139,92,246,0.4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(139,92,246,0.3);"><i class="fas fa-graduation-cap" style="color:#8b5cf6;font-size:1.2rem;"></i></span>',
+            title: 'Academic Milestone',
+            desc: 'Scored 90% in Matriculation',
+            rarity: 'RARE',
+            color: '#8b5cf6',
+            xp: 100,
+            date: 'Mar 2026',
+            features: ['90% Matric', '77% F.Sc', 'IELTS 6.0'],
+            detail: 'Consistent academic excellence — 90% Matric, 77% F.Sc, IELTS 6.0.',
+            journey: ['Matric: 90%', 'F.Sc: 77%', 'IELTS: 6.0', 'German: B1']
+        },
+        {
+            id: 'typing-milestone',
+            icon: '<span style="font-size:2.5rem;">⌨️</span>',
+            smallIcon: '<span style="width:65px;height:65px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,0.2),transparent);border:3px solid #fbbf24;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(251,191,36,0.4);"><span style="font-weight:900;font-size:0.95rem;color:#fbbf24;">53</span></span>',
+            title: 'Typing Milestone',
+            desc: 'Achieved 53 WPM typing',
+            rarity: 'RARE',
+            color: '#fbbf24',
+            xp: 100,
+            date: 'Apr 2026',
+            features: ['Touch Typing', '95% Accuracy'],
+            detail: 'Improved from 20 WPM to 53 WPM through daily practice.',
+            journey: ['Week 1: 20 WPM', 'Week 8: 45 WPM', 'Week 12: 53 WPM']
+        },
+        {
+            id: 'german-journey',
+            icon: '<img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/de.svg" style="width:50px;height:35px;border-radius:4px;">',
+            smallIcon: '<span style="width:65px;height:65px;border-radius:12px;background:linear-gradient(135deg,rgba(255,68,68,0.15),rgba(255,190,60,0.1));border:2px solid rgba(255,68,68,0.4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(255,68,68,0.3);"><img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/de.svg" style="width:28px;height:20px;border-radius:3px;"></span>',
+            title: 'German Journey',
+            desc: 'Reached B1 level in German',
+            rarity: 'EPIC',
+            color: '#ff4444',
+            xp: 200,
+            date: 'May 2026',
+            features: ['A1 Complete', 'A2 Complete', 'B1 Progress'],
+            detail: 'From zero to B1 — mastered A1, A2, progressing through B1.',
+            journey: ['Month 1: A1', 'Month 3: A2', 'Month 6: B1', 'Now: Exam prep']
+        },
+        {
+            id: 'portfolio-builder',
+            icon: '<i class="fas fa-rocket" style="color:#ff6b35;font-size:2.2rem;"></i>',
+            smallIcon: '<span style="width:65px;height:65px;border-radius:12px;background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,68,68,0.1));border:2px solid rgba(255,107,53,0.4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(255,107,53,0.3);"><i class="fas fa-rocket" style="color:#ff6b35;font-size:1.2rem;"></i></span>',
+            title: 'Portfolio Builder',
+            desc: 'Created this portfolio',
+            rarity: 'EPIC',
+            color: '#ff6b35',
+            xp: 200,
+            date: 'Jun 2026',
+            features: ['20 Themes', 'JARVIS AI', 'Gesture'],
+            detail: 'Built with HTML, CSS, JavaScript — 20 themes, JARVIS AI.',
+            journey: ['Phase 1: HTML', 'Phase 3: JARVIS', 'Phase 4: Premium']
+        },
+        {
+            id: 'system-explorer',
+            icon: '<i class="fas fa-compass" style="color:#00d4ff;font-size:2.2rem;"></i>',
+            smallIcon: '<span style="width:65px;height:65px;border-radius:12px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(139,92,246,0.1));border:2px solid rgba(0,212,255,0.4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(0,212,255,0.3);"><i class="fas fa-compass" style="color:#00d4ff;font-size:1.2rem;"></i></span>',
+            title: 'System Explorer',
+            desc: 'Explored all features',
+            rarity: 'LEGENDARY',
+            color: '#00d4ff',
+            xp: 300,
+            date: 'Jul 2026',
+            features: ['Dashboard', 'Timeline', 'Tools'],
+            detail: 'Discovered every hidden feature in the portfolio.',
+            journey: ['Dashboard', 'Timeline', 'Tools', 'Gallery']
+        },
+        {
+            id: 'theme-master',
+            icon: '<i class="fas fa-palette" style="color:#ffd700;font-size:2.2rem;"></i>',
+            smallIcon: '<span style="width:65px;height:65px;border-radius:12px;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,190,60,0.1));border:2px solid rgba(255,215,0,0.4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(255,215,0,0.3);"><i class="fas fa-palette" style="color:#ffd700;font-size:1.2rem;"></i></span>',
+            title: 'Theme Master',
+            desc: 'Tried all 20 themes',
+            rarity: 'LEGENDARY',
+            color: '#ffd700',
+            xp: 300,
+            date: 'Aug 2026',
+            features: ['Cosmic', 'Nebula', 'Aurora'],
+            detail: 'Experienced all 20 visual themes.',
+            journey: ['Cosmic', 'Aurora', 'Gold', 'Fire']
+        }
+    ];
+    
+    let currentIndex = 0;
+    
+    function createCard(ach, index) {
+        const isLegendary = ach.rarity === 'LEGENDARY';
+        const borderAnimation = isLegendary ? 'animation:legendaryBorder 3s infinite;' : '';
+        const floatDelay = (index * 0.3) + 's';
+        
+        return '<div class="achievement-card" data-index="' + index + '" style="background:rgba(8,15,35,0.8);border:1px solid ' + ach.color + '40;border-radius:16px;padding:30px 24px;text-align:center;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 0 20px ' + ach.color + '30;animation:cardFloatGlow 4s ease-in-out infinite;animation-delay:' + floatDelay + ';' + borderAnimation + '">' +
+            '<div style="position:absolute;top:8px;right:8px;background:' + ach.color + '15;border:1px solid ' + ach.color + '40;padding:3px 8px;border-radius:10px;font-size:0.5rem;color:' + ach.color + ';font-weight:700;z-index:2;">+' + ach.xp + ' XP</div>' +
+            '<div style="margin-bottom:12px;display:flex;justify-content:center;">' + ach.smallIcon + '</div>' +
+            '<div style="font-size:0.95rem;font-weight:800;color:#f0f4ff;margin-bottom:4px;">' + ach.title + '</div>' +
+            '<div style="font-size:0.5rem;letter-spacing:2px;color:' + ach.color + ';margin-bottom:6px;">' + ach.rarity + '</div>' +
+            '<div style="font-size:0.55rem;color:#94a3b8;">' + ach.desc + '</div>' +
+        '</div>';
+    }
+    
+    function populateGrid() {
+        const grid = document.getElementById('achievementGrid');
+        if (!grid) return;
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(250px, 1fr))';
+        grid.style.gap = '16px';
+        grid.innerHTML = '';
+        
+        achievements.forEach(function(ach, index) {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = createCard(ach, index);
+            const card = wrapper.firstElementChild;
+            grid.appendChild(card);
+            
+            card.addEventListener('click', function() {
+                openDetail(index);
+            });
+            
+            card.addEventListener('mouseenter', function() {
+                this.style.animationPlayState = 'paused';
+                this.style.transform = 'translateY(-8px) scale(1.03)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.animationPlayState = 'running';
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    }
+    
+    function openDetail(index) {
+        currentIndex = index;
+        playOpenSound();
+        particleBurst(achievements[index].color);
+        renderDetail();
+    }
+    
+    function renderDetail() {
+        const ach = achievements[currentIndex];
+        const existing = document.getElementById('achDetailOverlay');
+        if (existing) existing.remove();
+        
+        const overlay = document.createElement('div');
+        overlay.id = 'achDetailOverlay';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:99999;display:flex;justify-content:center;align-items:center;backdrop-filter:blur(25px);cursor:default;';
+        
+        let journeyHTML = '';
+        ach.journey.forEach(function(step, i) {
+            journeyHTML += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);">' +
+                '<span style="width:24px;height:24px;border-radius:50%;background:' + ach.color + '15;border:1px solid ' + ach.color + '40;display:inline-flex;align-items:center;justify-content:center;font-size:0.5rem;color:' + ach.color + ';">' + (i+1) + '</span>' +
+                '<span style="font-size:0.65rem;color:#e2e8f0;">' + step + '</span>' +
+            '</div>';
+        });
+        
+        let featuresHTML = '';
+        ach.features.forEach(function(feature) {
+            featuresHTML += '<span style="background:' + ach.color + '15;border:1px solid ' + ach.color + '40;padding:5px 10px;border-radius:15px;font-size:0.55rem;color:' + ach.color + ';">' + feature + '</span>';
+        });
+        
+        overlay.innerHTML = 
+            '<div style="background:rgba(10,18,40,0.98);border:1px solid ' + ach.color + ';border-radius:24px;padding:35px;max-width:450px;width:90%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 0 80px ' + ach.color + '40;">' +
+            '<button onclick="this.closest(\'#achDetailOverlay\').remove()" style="position:absolute;top:15px;right:15px;background:none;border:1px solid rgba(255,255,255,0.2);color:#94a3b8;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.95rem;">✕</button>' +
+            '<button onclick="achNavigate(-1)" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);background:none;border:1px solid ' + ach.color + '40;color:' + ach.color + ';width:35px;height:35px;border-radius:50%;cursor:pointer;">‹</button>' +
+            '<button onclick="achNavigate(1)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:1px solid ' + ach.color + '40;color:' + ach.color + ';width:35px;height:35px;border-radius:50%;cursor:pointer;">›</button>' +
+            '<div style="text-align:center;margin-bottom:15px;">' + ach.icon + '</div>' +
+            '<h3 style="text-align:center;color:#f0f4ff;margin-bottom:4px;">' + ach.title + '</h3>' +
+            '<div style="text-align:center;margin-bottom:15px;">' +
+                '<span style="color:' + ach.color + ';font-size:0.55rem;letter-spacing:2px;">' + ach.rarity + '</span>' +
+                '<span style="color:#94a3b8;font-size:0.55rem;margin-left:10px;">+' + ach.xp + ' XP</span>' +
+                '<span style="color:#94a3b8;font-size:0.55rem;margin-left:10px;">📅 ' + ach.date + '</span>' +
+            '</div>' +
+            '<p style="color:#94a3b8;font-size:0.7rem;line-height:1.6;text-align:center;margin-bottom:20px;">' + ach.detail + '</p>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px;">' + featuresHTML + '</div>' +
+            '<div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:15px;">' +
+                '<div style="font-size:0.55rem;color:' + ach.color + ';letter-spacing:2px;margin-bottom:10px;">JOURNEY</div>' +
+                journeyHTML +
+            '</div>' +
+        '</div>';
+        
+        document.body.appendChild(overlay);
+        
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) overlay.remove();
+        });
+    }
+    
+    window.achNavigate = function(direction) {
+        currentIndex = (currentIndex + direction + achievements.length) % achievements.length;
+        playSound(500, 0.1, 0.06);
+        renderDetail();
+    };
+    
+    populateGrid();
+    console.log('🏆 Achievement System Ready!');
 });
 </script>
 </body>
