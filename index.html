@@ -4240,18 +4240,756 @@
     document.addEventListener("DOMContentLoaded", generateBadges);
 </script>
 <body>
-  <!-- ==================== PASSWORD SCREEN ==================== -->
-<div id="password-screen">
-    <div id="password-box">
-        <div class="icon-lock"><i class="fas fa-lock"></i></div>
-        <h2>Portfolio Locked 🔒</h2>
-        <p>Please enter password to view</p>
-        <input type="password" id="password-input" placeholder="Enter password..." onkeydown="if(event.key==='Enter') checkPassword()">
-        <button onclick="checkPassword()">Unlock <i class="fas fa-arrow-right"></i></button>
-        <div id="password-error">❌ Wrong password! Try Again.</div>
+  <!-- ==================== MASTER AURORA — FINAL ULTIMATE EDITION ==================== -->
+<div id="tierOverlay" style="position:fixed;top:0;left:0;width:100%;height:100vh;background:#000;z-index:99999;overflow:hidden;cursor:none;">
+    
+    <canvas id="tierCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+    
+    <!-- CUSTOM CURSOR -->
+    <div id="tierCursor" style="position:fixed;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 20px #fff,0 0 50px #00d4ff;pointer-events:none;z-index:999999;transform:translate(-50%,-50%);transition:all 0.3s;"></div>
+    
+    <!-- LOADING PROGRESS BAR -->
+    <div id="loadingBar" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:300px;height:2px;background:rgba(255,255,255,0.1);border-radius:1px;z-index:10;overflow:hidden;transition:opacity 0.5s;">
+        <div id="loadingProgress" style="height:100%;width:0%;background:linear-gradient(90deg,#00d4ff,#8b5cf6,#ff6600);border-radius:1px;transition:width 0.3s;"></div>
     </div>
+    
+    <!-- MASTER AURORA TITLE -->
+    <div id="masterTitle" style="position:absolute;top:30px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;opacity:0;transition:opacity 2s;">
+        <div style="font-family:'Great Vibes',cursive;font-size:3.5rem;color:#fff;text-shadow:0 0 30px #00d4ff,0 0 60px #8b5cf6,0 0 100px #00d4ff;letter-spacing:2px;">
+            Master Aurora
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:rgba(0,212,255,0.6);letter-spacing:8px;text-transform:uppercase;margin-top:5px;">
+            ✦ Celestial Gateway ✦
+        </div>
+    </div>
+    
+    <!-- TIER INDICATOR -->
+    <div id="tierIndicator" style="position:absolute;top:130px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:12px;opacity:0;transition:opacity 1s;">
+        <div class="tier-dot" data-tier="CLASSIC" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all 0.5s;"></div>
+        <div class="tier-dot" data-tier="SUPER" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all 0.5s;"></div>
+        <div class="tier-dot" data-tier="EXCELLENT" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all 0.5s;"></div>
+        <div class="tier-dot" data-tier="PREMIUM" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all 0.5s;"></div>
+        <div class="tier-dot" data-tier="ELITE" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all 0.5s;"></div>
+    </div>
+    
+    <!-- STATE DISPLAY -->
+    <div id="tierState" style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);z-index:10;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:5px;color:rgba(0,212,255,0.5);text-transform:uppercase;">
+        READY TO ENTER
+    </div>
+    
+    <!-- ENTRY BUTTON -->
+    <div id="tierButton" style="position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:10;opacity:0;transition:opacity 1s;">
+        <button onclick="enterSite()" 
+                style="padding:16px 50px;background:transparent;border:1px solid rgba(0,212,255,0.5);color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.1rem;letter-spacing:6px;cursor:pointer;transition:all 0.5s;text-transform:uppercase;"
+                onmouseover="this.style.background='rgba(0,212,255,0.1)';this.style.boxShadow='0 0 50px rgba(0,212,255,0.5)';this.style.borderColor='#00d4ff';"
+                onmouseout="this.style.background='transparent';this.style.boxShadow='none';this.style.borderColor='rgba(0,212,255,0.5)';">
+            ✦ Enter ✦
+        </button>
+    </div>
+    
+    <!-- TIER INFO -->
+    <div id="tierInfo" style="position:absolute;top:50%;right:40px;transform:translateY(-50%);z-index:10;text-align:right;opacity:0;transition:opacity 1s;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:2px;line-height:2.2;text-transform:uppercase;">
+            <div>Energy: <span id="tierEnergy">20%</span></div>
+            <div>Particles: <span id="tierParticles">500</span></div>
+            <div>Speed: <span id="tierSpeed">1x</span></div>
+        </div>
+    </div>
+    
 </div>
-<div id="main-content">
+
+<!-- FONTS -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+    @keyframes elitePulse {
+        0%, 100% { text-shadow: 0 0 50px #ff6600, 0 0 100px #ff3300, 0 0 150px #ff0000; }
+        50% { text-shadow: 0 0 80px #ffaa00, 0 0 150px #ff6600, 0 0 200px #ff3300; }
+    }
+    
+    @keyframes eliteGlitch {
+        0%, 100% { transform: scale(1); }
+        25% { transform: scale(1.05) skewX(2deg); }
+        50% { transform: scale(0.95) skewX(-2deg); }
+        75% { transform: scale(1.02) skewX(1deg); }
+    }
+</style>
+
+<!-- ============================================================
+     MASTER AURORA — FINAL ULTIMATE EDITION ENGINE
+     ============================================================ -->
+<script>
+(function() {
+    
+    const canvas = document.getElementById('tierCanvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    let W, H, CX, CY, DPR;
+    let time = 0;
+    let energy = 0;
+    let targetEnergy = 0;
+    let mouseX = 0, mouseY = 0, mouseActive = false;
+    let opening = false;
+    let cycleInterval = null;
+    
+    /* TIER SYSTEM */
+    const TIERS = {
+        CLASSIC: { color: [0, 212, 255], energyMultiplier: 0.2, particleCount: 500, ringCount: 4, speedMultiplier: 1, glowIntensity: 20, arcRate: 0.005, sparkRate: 0.01, waveRate: 0.001, beamCount: 8 },
+        SUPER: { color: [0, 220, 255], energyMultiplier: 0.4, particleCount: 800, ringCount: 6, speedMultiplier: 1.5, glowIntensity: 40, arcRate: 0.01, sparkRate: 0.02, waveRate: 0.002, beamCount: 12 },
+        EXCELLENT: { color: [139, 92, 246], energyMultiplier: 0.6, particleCount: 1200, ringCount: 8, speedMultiplier: 2, glowIntensity: 60, arcRate: 0.015, sparkRate: 0.03, waveRate: 0.003, beamCount: 18 },
+        PREMIUM: { color: [255, 190, 60], energyMultiplier: 0.8, particleCount: 1600, ringCount: 10, speedMultiplier: 3, glowIntensity: 80, arcRate: 0.02, sparkRate: 0.04, waveRate: 0.004, beamCount: 24 },
+        ELITE: { color: [255, 100, 0], energyMultiplier: 1.0, particleCount: 2000, ringCount: 12, speedMultiplier: 5, glowIntensity: 120, arcRate: 0.03, sparkRate: 0.06, waveRate: 0.006, beamCount: 32 }
+    };
+    
+    let currentTier = 'CLASSIC';
+    let tier = TIERS[currentTier];
+    
+    let particles = [];
+    let dust = [];
+    let rings = [];
+    let waves = [];
+    let arcs = [];
+    let sparks = [];
+    
+    /* AUDIO */
+    let audioCtx = null;
+    
+    function initAudio() {
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+    }
+    
+    function playBeep(freq, duration, vol) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq || 800;
+        gain.gain.setValueAtTime(vol || 0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (duration || 0.1));
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + (duration || 0.1));
+    }
+    
+    function playTierChangeSound() {
+        playBeep(600 + Math.random() * 400, 0.08, 0.08);
+    }
+    
+    function playEnterSound() {
+        playBeep(200, 0.5, 0.2);
+        setTimeout(() => playBeep(400, 0.3, 0.15), 200);
+        setTimeout(() => playBeep(800, 0.4, 0.2), 400);
+    }
+    
+    /* RESIZE */
+    function resize() {
+        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        W = window.innerWidth;
+        H = window.innerHeight;
+        canvas.width = W * DPR;
+        canvas.height = H * DPR;
+        canvas.style.width = W + 'px';
+        canvas.style.height = H + 'px';
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        CX = W / 2;
+        CY = H / 2;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    
+    /* CREATE PARTICLES */
+    function createParticles() {
+        particles = [];
+        for (let i = 0; i < tier.particleCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 50 + Math.pow(Math.random(), 0.6) * 500;
+            particles.push({
+                angle: angle,
+                radius: radius,
+                speed: (0.0005 + Math.random() * 0.004) * (Math.random() > 0.5 ? 1 : -1),
+                size: Math.random() * 1.8 + 0.3,
+                depth: Math.random(),
+                phase: Math.random() * Math.PI * 2,
+                twinkle: Math.random() * 0.04 + 0.01
+            });
+        }
+    }
+    
+    /* CREATE DUST */
+    function createDust() {
+        dust = [];
+        for (let i = 0; i < 200; i++) {
+            dust.push({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                size: Math.random() * 1,
+                alpha: Math.random() * 0.15,
+                drift: Math.random() * 0.15 + 0.03
+            });
+        }
+    }
+    
+    /* CREATE RINGS */
+    function createRings() {
+        rings = [];
+        for (let i = 0; i < tier.ringCount; i++) {
+            rings.push({
+                radius: 60 + i * 25,
+                speed: 0.006 - i * 0.0005,
+                tilt: 0.2 + i * 0.1,
+                alpha: 1 - i * 0.08,
+                gold: i % 3 === 0,
+                rotation: Math.random() * Math.PI * 2,
+                segments: 80 + i * 15,
+                speedMultiplier: 1
+            });
+        }
+    }
+    
+    /* SPAWN */
+    function spawnWave(multiplier) {
+        multiplier = multiplier || 1;
+        waves.push({
+            radius: 20,
+            alpha: 1,
+            speed: (4 + Math.random() * 6) * multiplier * tier.speedMultiplier,
+            width: Math.random() > 0.7 ? 2 : 0.8,
+            color: tier.color
+        });
+    }
+    
+    function spawnArc() {
+        const angle = Math.random() * Math.PI * 2;
+        const startR = 15;
+        const endR = 80 + Math.random() * 250;
+        const points = [];
+        const count = 14;
+        
+        for (let i = 0; i <= count; i++) {
+            const p = i / count;
+            const radius = startR + (endR - startR) * p;
+            const a = angle + (Math.random() - 0.5) * 0.8 * p;
+            points.push({
+                x: CX + Math.cos(a) * radius,
+                y: CY + Math.sin(a) * radius * 0.6
+            });
+        }
+        
+        arcs.push({
+            points: points,
+            life: 1,
+            decay: 0.02 + Math.random() * 0.04,
+            color: tier.color
+        });
+    }
+    
+    function spawnSpark() {
+        const a = Math.random() * Math.PI * 2;
+        const r = 50 + Math.random() * 280;
+        sparks.push({
+            x: CX + Math.cos(a) * r,
+            y: CY + Math.sin(a) * r * 0.6,
+            vx: (Math.random() - 0.5) * 3,
+            vy: (Math.random() - 0.5) * 3,
+            life: 1,
+            size: Math.random() * 2 + 0.5,
+            color: tier.color
+        });
+    }
+    
+    /* DRAW */
+    function drawBackground() {
+        const grad = ctx.createRadialGradient(CX, CY, 0, CX, CY, Math.max(W, H) * 0.75);
+        grad.addColorStop(0, 'rgba(8,15,35,1)');
+        grad.addColorStop(0.3, 'rgba(3,6,18,1)');
+        grad.addColorStop(1, '#000');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+    }
+    
+    function drawDust() {
+        dust.forEach(d => {
+            d.y -= d.drift;
+            if (d.y < 0) d.y = H;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,' + d.alpha + ')';
+            ctx.fill();
+        });
+    }
+    
+    function drawParticles() {
+        particles.forEach(p => {
+            p.angle += p.speed * (1 + energy * 3) * tier.speedMultiplier;
+            
+            const perspective = 0.5 + p.depth * 0.8;
+            const wobble = Math.sin(time * 0.9 + p.phase) * 4;
+            
+            let x = CX + Math.cos(p.angle) * (p.radius + wobble) * perspective;
+            let y = CY + Math.sin(p.angle) * (p.radius + wobble) * 0.55 * perspective;
+            
+            if (mouseActive) {
+                const dx = mouseX - x;
+                const dy = mouseY - y;
+                const d = Math.hypot(dx, dy);
+                if (d < 250) {
+                    const force = (1 - d / 250) * 0.06;
+                    x += dx * force;
+                    y += dy * force;
+                }
+            }
+            
+            const twinkle = 0.5 + Math.sin(time * p.twinkle * 50 + p.phase) * 0.5;
+            const alpha = twinkle * (0.1 + p.depth * 0.7);
+            
+            let color;
+            if (p.depth < 0.3) color = '255,255,255';
+            else if (p.depth < 0.7) color = tier.color.join(',');
+            else color = '139,92,246';
+            
+            ctx.beginPath();
+            ctx.arc(x, y, p.size * (0.3 + p.depth), 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + color + ',' + alpha + ')';
+            ctx.fill();
+        });
+    }
+    
+    function drawRings() {
+        rings.forEach((ring) => {
+            ring.rotation += ring.speed * ring.speedMultiplier * (1 + energy * 4) * tier.speedMultiplier;
+            
+            ctx.save();
+            ctx.translate(CX, CY);
+            
+            const px = (mouseX - CX) * 0.001;
+            const py = (mouseY - CY) * 0.0008;
+            
+            ctx.rotate(ring.tilt + px + py);
+            ctx.scale(1, 0.4 + ring.tilt * 0.2);
+            
+            const segments = ring.segments;
+            const gap = Math.max(4, Math.floor(segments * 0.06));
+            
+            for (let i = 0; i < segments; i++) {
+                if (i % gap === 0 || i % gap === 1) continue;
+                
+                const a1 = (i / segments) * Math.PI * 2 + ring.rotation;
+                const a2 = ((i + 0.8) / segments) * Math.PI * 2 + ring.rotation;
+                
+                ctx.beginPath();
+                ctx.arc(0, 0, ring.radius, a1, a2);
+                
+                const color = ring.gold ? '255,190,60' : tier.color.join(',');
+                const alpha = ring.alpha * (0.5 + energy * 0.9);
+                
+                ctx.strokeStyle = 'rgba(' + color + ',' + alpha + ')';
+                ctx.lineWidth = ring.gold ? 1.5 : 0.8;
+                ctx.shadowColor = 'rgba(' + color + ',0.9)';
+                ctx.shadowBlur = ring.gold ? 12 : 6;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+            
+            for (let n = 0; n < 5; n++) {
+                const a = ring.rotation * 3 + n * Math.PI * 2 / 5;
+                const x = Math.cos(a) * ring.radius;
+                const y = Math.sin(a) * ring.radius;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, ring.gold ? 3 : 2, 0, Math.PI * 2);
+                
+                const color = ring.gold ? '255,190,60' : tier.color.join(',');
+                ctx.fillStyle = 'rgba(' + color + ',1)';
+                ctx.shadowColor = 'rgba(' + color + ',1)';
+                ctx.shadowBlur = 15;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+            
+            ctx.restore();
+        });
+    }
+    
+    function drawBeams() {
+        for (let i = 0; i < tier.beamCount; i++) {
+            const angle = time * 0.5 + i * Math.PI * 2 / tier.beamCount;
+            const length = 100 + Math.sin(time * 3 + i) * 80;
+            
+            const x1 = CX + Math.cos(angle) * 20;
+            const y1 = CY + Math.sin(angle) * 20;
+            const x2 = CX + Math.cos(angle) * length;
+            const y2 = CY + Math.sin(angle) * length;
+            
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            
+            const gold = i % 8 === 0;
+            const color = gold ? '255,190,60' : tier.color.join(',');
+            
+            ctx.strokeStyle = 'rgba(' + color + ',' + (0.1 + energy * 0.2) + ')';
+            ctx.lineWidth = gold ? 2 : 1;
+            ctx.shadowColor = 'rgba(' + color + ',0.8)';
+            ctx.shadowBlur = 10;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+    }
+    
+    function drawCore() {
+        const pulse = 1 + Math.sin(time * 5) * 0.1 + Math.sin(time * 11) * 0.05;
+        const R = (50 + energy * 120) * pulse;
+        
+        const aura = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 3);
+        aura.addColorStop(0, 'rgba(255,255,255,' + (0.2 + energy * 0.3) + ')');
+        aura.addColorStop(0.15, 'rgba(' + tier.color.join(',') + ',0.15)');
+        aura.addColorStop(0.4, 'rgba(139,92,246,' + (0.05 + energy * 0.1) + ')');
+        aura.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = aura;
+        ctx.fillRect(CX - R * 3, CY - R * 3, R * 6, R * 6);
+        
+        const plasma = ctx.createRadialGradient(CX, CY, 0, CX, CY, R);
+        plasma.addColorStop(0, 'rgba(255,255,255,1)');
+        plasma.addColorStop(0.1, 'rgba(' + tier.color.join(',') + ',0.9)');
+        plasma.addColorStop(0.25, 'rgba(' + tier.color.join(',') + ',0.7)');
+        plasma.addColorStop(0.5, 'rgba(139,92,246,0.5)');
+        plasma.addColorStop(0.75, 'rgba(0,30,100,0.15)');
+        plasma.addColorStop(1, 'rgba(0,0,0,0)');
+        
+        ctx.beginPath();
+        ctx.arc(CX, CY, R, 0, Math.PI * 2);
+        ctx.fillStyle = plasma;
+        ctx.shadowColor = 'rgba(' + tier.color.join(',') + ',0.9)';
+        ctx.shadowBlur = tier.glowIntensity + energy * 60;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        ctx.beginPath();
+        for (let a = 0; a < Math.PI * 2; a += 0.03) {
+            const distortion = Math.sin(a * 10 + time * 7) * 5 + Math.sin(a * 20 - time * 10) * 3;
+            const rr = R * 0.7 + distortion;
+            const x = CX + Math.cos(a) * rr;
+            const y = CY + Math.sin(a) * rr;
+            if (a === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = 'rgba(' + tier.color.join(',') + ',0.5)';
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = 'rgba(' + tier.color.join(',') + ',1)';
+        ctx.shadowBlur = 20;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        
+        const nucleus = 8 + Math.sin(time * 10) * 2;
+        ctx.beginPath();
+        ctx.arc(CX, CY, nucleus, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = '#fff';
+        ctx.shadowBlur = tier.glowIntensity;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+    
+    function drawWaves() {
+        for (let i = waves.length - 1; i >= 0; i--) {
+            const w = waves[i];
+            w.radius += w.speed;
+            w.alpha *= 0.97;
+            
+            ctx.beginPath();
+            ctx.arc(CX, CY, w.radius, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(' + w.color.join(',') + ',' + w.alpha + ')';
+            ctx.lineWidth = w.width;
+            ctx.shadowColor = 'rgba(' + w.color.join(',') + ',1)';
+            ctx.shadowBlur = 15;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            
+            if (w.alpha < 0.01) waves.splice(i, 1);
+        }
+    }
+    
+    function drawArcs() {
+        for (let i = arcs.length - 1; i >= 0; i--) {
+            const arc = arcs[i];
+            arc.life -= arc.decay;
+            
+            ctx.beginPath();
+            arc.points.forEach((p, index) => {
+                if (index === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            });
+            
+            ctx.strokeStyle = 'rgba(' + arc.color.join(',') + ',' + arc.life + ')';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = 'rgba(' + arc.color.join(',') + ',1)';
+            ctx.shadowBlur = 20;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            
+            if (arc.life <= 0) arcs.splice(i, 1);
+        }
+    }
+    
+    function drawSparks() {
+        sparks.forEach(s => {
+            s.x += s.vx;
+            s.y += s.vy;
+            s.life -= 0.02;
+            
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + s.color.join(',') + ',' + s.life + ')';
+            ctx.shadowColor = 'rgba(' + s.color.join(',') + ',1)';
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        });
+        
+        for (let i = sparks.length - 1; i >= 0; i--) {
+            if (sparks[i].life <= 0) sparks.splice(i, 1);
+        }
+    }
+    
+    /* SET TIER */
+    function setTier(tierName) {
+        if (!TIERS[tierName]) return;
+        
+        currentTier = tierName;
+        tier = TIERS[tierName];
+        
+        document.querySelectorAll('.tier-dot').forEach(dot => {
+            const dotTier = dot.getAttribute('data-tier');
+            if (dotTier === tierName) {
+                dot.style.background = 'rgb(' + tier.color.join(',') + ')';
+                dot.style.boxShadow = '0 0 20px rgb(' + tier.color.join(',') + '),0 0 40px rgb(' + tier.color.join(',') + ')';
+                dot.style.width = '10px';
+                dot.style.height = '10px';
+            } else {
+                dot.style.background = 'rgba(255,255,255,0.3)';
+                dot.style.boxShadow = 'none';
+                dot.style.width = '6px';
+                dot.style.height = '6px';
+            }
+        });
+        
+        document.getElementById('tierEnergy').textContent = Math.round(tier.energyMultiplier * 100) + '%';
+        document.getElementById('tierParticles').textContent = tier.particleCount;
+        document.getElementById('tierSpeed').textContent = tier.speedMultiplier + 'x';
+        
+        createParticles();
+        createRings();
+        
+        targetEnergy = tier.energyMultiplier;
+        spawnWave(3);
+        for (let i = 0; i < 10; i++) spawnArc();
+        
+        try { localStorage.setItem('masterAuroraTier', tierName); } catch(e) {}
+        
+        playTierChangeSound();
+    }
+    
+    /* CYCLE */
+    function cycleTier() {
+        const tierOrder = ['CLASSIC', 'SUPER', 'EXCELLENT', 'PREMIUM', 'ELITE'];
+        const currentIndex = tierOrder.indexOf(currentTier);
+        const nextIndex = (currentIndex + 1) % tierOrder.length;
+        setTier(tierOrder[nextIndex]);
+    }
+    
+    /* RENDER */
+    function render() {
+        time += 0.016;
+        energy += (targetEnergy - energy) * 0.04;
+        
+        ctx.clearRect(0, 0, W, H);
+        
+        drawBackground();
+        drawDust();
+        drawParticles();
+        drawBeams();
+        drawRings();
+        drawWaves();
+        drawArcs();
+        drawSparks();
+        drawCore();
+        
+        if (Math.random() < tier.sparkRate) spawnSpark();
+        if (Math.random() < tier.arcRate) spawnArc();
+        if (Math.random() < tier.waveRate) spawnWave();
+        
+        requestAnimationFrame(render);
+    }
+    
+    /* POINTER */
+    function updatePointer(x, y) {
+        mouseX = x;
+        mouseY = y;
+        mouseActive = true;
+        
+        const cursor = document.getElementById('tierCursor');
+        if (cursor) {
+            cursor.style.left = x + 'px';
+            cursor.style.top = y + 'px';
+            
+            const d = Math.hypot(x - CX, y - CY);
+            
+            if (d < 100) {
+                cursor.style.width = '15px';
+                cursor.style.height = '15px';
+                cursor.style.boxShadow = '0 0 50px #fff,0 0 100px rgb(' + tier.color.join(',') + ')';
+                targetEnergy = tier.energyMultiplier;
+            } else {
+                cursor.style.width = '5px';
+                cursor.style.height = '5px';
+                cursor.style.boxShadow = '0 0 20px #fff,0 0 50px rgb(' + tier.color.join(',') + ')';
+                targetEnergy = tier.energyMultiplier * 0.3;
+            }
+        }
+    }
+    
+    document.addEventListener('mousemove', e => updatePointer(e.clientX, e.clientY));
+    document.addEventListener('touchmove', e => {
+        if (e.touches.length > 0) {
+            updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+        }
+    }, { passive: true });
+    
+    /* KEYBOARD */
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (opening) return;
+            enterSite();
+        } else if (e.key === 'c' || e.key === 'C') {
+            if (!opening) cycleTier();
+        }
+    });
+    
+    /* ENTER */
+    window.enterSite = function() {
+        if (opening) return;
+        opening = true;
+        
+        if (cycleInterval) {
+            clearInterval(cycleInterval);
+            cycleInterval = null;
+        }
+        
+        const state = document.getElementById('tierState');
+        if (state) state.textContent = 'ACCESS GRANTED';
+        
+        playEnterSound();
+        
+        targetEnergy = 1;
+        
+        rings.forEach(ring => {
+            ring.speedMultiplier = 10;
+        });
+        
+        for (let i = 0; i < 30; i++) {
+            setTimeout(() => {
+                spawnWave(3);
+                spawnArc();
+            }, i * 50);
+        }
+        
+        setTimeout(() => {
+            rings.forEach(ring => {
+                ring.speedMultiplier = 0;
+            });
+            targetEnergy = 0;
+        }, 500);
+        
+        setTimeout(() => {
+            targetEnergy = -1;
+            waves.length = 0;
+        }, 1000);
+        
+        setTimeout(() => {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    spawnWave(5);
+                }, i * 20);
+            }
+        }, 1500);
+        
+        setTimeout(() => {
+            const overlay = document.getElementById('tierOverlay');
+            if (overlay) overlay.style.opacity = '0';
+            
+            setTimeout(() => {
+                if (overlay) overlay.style.display = 'none';
+                const main = document.getElementById('main-content');
+                if (main) main.style.display = 'block';
+            }, 800);
+        }, 2500);
+    };
+    
+    /* INIT */
+    function init() {
+        createDust();
+        
+        let savedTier = null;
+        try { savedTier = localStorage.getItem('masterAuroraTier'); } catch(e) {}
+        if (savedTier && TIERS[savedTier]) {
+            setTier(savedTier);
+        } else {
+            setTier('CLASSIC');
+        }
+        
+        mouseX = CX;
+        mouseY = CY;
+        targetEnergy = 0.2;
+        
+        let progress = 0;
+        const progressBar = document.getElementById('loadingProgress');
+        const loadingBar = document.getElementById('loadingBar');
+        
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+                setTimeout(() => {
+                    if (loadingBar) loadingBar.style.opacity = '0';
+                }, 300);
+            }
+            if (progressBar) progressBar.style.width = progress + '%';
+        }, 200);
+        
+        setTimeout(() => { spawnWave(3); }, 400);
+        
+        setTimeout(() => {
+            const title = document.getElementById('masterTitle');
+            const indicator = document.getElementById('tierIndicator');
+            const info = document.getElementById('tierInfo');
+            if (title) title.style.opacity = '1';
+            if (indicator) indicator.style.opacity = '1';
+            if (info) info.style.opacity = '1';
+        }, 1000);
+        
+        setTimeout(() => {
+            const button = document.getElementById('tierButton');
+            if (button) button.style.opacity = '1';
+        }, 2000);
+        
+        cycleInterval = setInterval(cycleTier, 3000);
+        
+        document.addEventListener('click', () => {
+            if (!audioCtx) initAudio();
+        }, { once: true });
+        
+        render();
+    }
+    
+    init();
+    
+})();
+</script>
 
 
 
@@ -4574,6 +5312,24 @@
     </section> 
 
 
+    <!-- ============================================================
+     TOOLS SECTION - PREMIUM
+     ============================================================ -->
+<section id="tools" class="section">
+    <div class="section-divider"></div>
+    <div class="container reveal">
+        <div class="section-header">
+            <span class="section-label">Tools</span>
+            <h2 class="section-title">My Tools Arsenal</h2>
+            <p class="section-subtitle">Tools I use for development, security, and content creation.</p>
+        </div>
+        
+        <!-- Tools Grid -->
+        <div id="toolsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+            <!-- JavaScript yahan tools generate karega -->
+        </div>
+    </div>
+</section>
     <!-- ============================================================
      DEVELOPER OS DASHBOARD
      ============================================================ -->
@@ -12095,6 +12851,141 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchGitHubData();
         fetchRepos();
         console.log('🐙 Premium GitHub Section Ready');
+    }, 500);
+});
+</script>
+
+<script>
+// =============================================================
+// TOOLS SECTION - ALL CORRECT LOGOS
+// =============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    'use strict';
+    
+    console.log('🛠️ Tools Section Loading...');
+    
+    // ============ TOOLS DATA WITH WORKING LOGOS ============
+    const toolsData = [
+        {
+            name: 'Python',
+            category: 'Development',
+            level: 'Beginner',
+            color: '#3776AB',
+            gradient: 'linear-gradient(135deg, #3776AB, #FFD43B)',
+            logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',
+            fallback: '🐍'
+        },
+        {
+            name: 'GitHub',
+            category: 'Version Control',
+            level: 'Beginner',
+            color: '#ffffff',
+            gradient: 'linear-gradient(135deg, #24292e, #ffffff)',
+            logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg',
+            fallback: 'GH'
+        },
+        {
+            name: 'VirtualBox',
+            category: 'Virtualization',
+            level: 'Beginner',
+            color: '#183A61',
+            gradient: 'linear-gradient(135deg, #183A61, #2F61A5)',
+            logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/virtualbox/virtualbox-original.svg',
+            fallback: 'VB'
+        },
+        {
+            name: 'Kali Linux',
+            category: 'Security',
+            level: 'Beginner',
+            color: '#557C94',
+            gradient: 'linear-gradient(135deg, #000000, #557C94)',
+            logo: 'https://www.kali.org/images/kali-logo.svg',
+            fallback: 'K'
+        },
+        {
+            name: 'BlackArch',
+            category: 'Security',
+            level: 'Beginner',
+            color: '#FF0000',
+            gradient: 'linear-gradient(135deg, #000000, #FF0000)',
+            logo: 'https://blackarch.org/images/logo.png',
+            fallback: 'BA'
+        },
+        {
+            name: 'CapCut',
+            category: 'Content Creation',
+            level: 'Beginner',
+            color: '#00E5FF',
+            gradient: 'linear-gradient(135deg, #00E5FF, #000000)',
+            logo: 'https://lf16-capcut.faceulv.com/obj/capcut-web-us/common/images/logo.png',
+            fallback: 'CC'
+        },
+        {
+            name: 'FlowCV',
+            category: 'Career',
+            level: 'Beginner',
+            color: '#4A90D9',
+            gradient: 'linear-gradient(135deg, #4A90D9, #6C63FF)',
+            logo: 'https://flowcv.com/favicon.svg',
+            fallback: 'FV'
+        }
+    ];
+    
+    // ============ CREATE TOOL CARD ============
+    function createToolCard(tool, index) {
+        return '<div style="background:rgba(8,15,35,0.85);border:1px solid ' + tool.color + '30;border-radius:16px;padding:24px;text-align:center;position:relative;overflow:hidden;cursor:pointer;transition:all 0.4s cubic-bezier(0.22,1,0.36,1);animation:toolCardIn 0.6s ease forwards;animation-delay:' + (index * 0.1) + 's;opacity:0;" onmouseover="this.style.transform=\'translateY(-8px) scale(1.03)\';this.style.borderColor=\'' + tool.color + '\';this.style.boxShadow=\'0 20px 50px rgba(0,0,0,0.5), 0 0 50px ' + tool.color + '40\';" onmouseout="this.style.transform=\'translateY(0) scale(1)\';this.style.borderColor=\'' + tool.color + '30\';this.style.boxShadow=\'none\';">' +
+            
+            // Lighting sweep
+            '<div style="position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,' + tool.color + '15,transparent);animation:lightingRun ' + (2 + index * 0.3) + 's linear infinite;"></div>' +
+            
+            // Top accent
+            '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:' + tool.gradient + ';border-radius:16px 16px 0 0;"></div>' +
+            
+            // Logo container with fallback
+            '<div style="width:70px;height:70px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:14px;padding:10px;animation:toolLogoFloat 3s ease-in-out infinite;animation-delay:' + (index * 0.2) + ';">' +
+                '<img src="' + tool.logo + '" alt="' + tool.name + '" style="max-width:50px;max-height:50px;object-fit:contain;filter:drop-shadow(0 0 10px ' + tool.color + ');" onerror="this.remove(); this.parentElement.textContent=\'' + tool.fallback + '\'; this.parentElement.style.fontSize=\'2rem\'; this.parentElement.style.color=\'' + tool.color + '\'; this.parentElement.style.fontWeight=\'900\';">' +
+            '</div>' +
+            
+            // Name
+            '<div style="font-family:Syne,sans-serif;font-size:0.9rem;font-weight:800;color:#f0f4ff;letter-spacing:0.5px;margin-bottom:4px;">' + tool.name + '</div>' +
+            
+            // Category
+            '<div style="font-size:0.55rem;font-family:JetBrains Mono,monospace;color:' + tool.color + ';letter-spacing:1px;margin-bottom:8px;">' + tool.category.toUpperCase() + '</div>' +
+            
+            // Level badge
+            '<div style="display:inline-block;padding:4px 12px;border-radius:20px;background:' + tool.color + '15;border:1px solid ' + tool.color + '40;font-size:0.55rem;font-family:JetBrains Mono,monospace;color:' + tool.color + ';font-weight:700;margin-bottom:10px;">● ' + tool.level.toUpperCase() + '</div>' +
+            
+            // Description
+            '<div style="font-size:0.6rem;color:#94a3b8;line-height:1.5;">' + tool.description + '</div>' +
+            
+        '</div>';
+    }
+    
+    // ============ RENDER TOOLS ============
+    function renderTools() {
+        const container = document.getElementById('toolsGrid');
+        if (!container) return;
+        
+        let html = '';
+        toolsData.forEach(function(tool, index) {
+            html += createToolCard(tool, index);
+        });
+        
+        container.innerHTML = html;
+    }
+    
+    // ============ ADD ANIMATIONS ============
+    const style = document.createElement('style');
+    style.textContent = 
+        '@keyframes lightingRun { 0% { left: -100%; } 100% { left: 200%; } }' +
+        '@keyframes toolLogoFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }' +
+        '@keyframes toolCardIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }';
+    document.head.appendChild(style);
+    
+    // ============ INITIALIZE ============
+    setTimeout(function() {
+        renderTools();
+        console.log('🛠️ Tools Section Ready');
     }, 500);
 });
 </script>
