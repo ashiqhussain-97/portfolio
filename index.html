@@ -6024,7 +6024,6 @@ document.addEventListener("DOMContentLoaded", generateBadges);
       <span style="background:rgba(168,85,247,0.1); color:#a78bfa; padding:4px 10px; border-radius:20px; font-size:0.65rem; font-family:'Inter',sans-serif;">S</span>
       <span style="background:rgba(236,72,153,0.1); color:#f472b6; padding:4px 10px; border-radius:20px; font-size:0.65rem; font-family:'Inter',sans-serif;">H</span>
       <span style="background:rgba(34,211,238,0.1); color:#22d3ee; padding:4px 10px; border-radius:20px; font-size:0.65rem; font-family:'Inter',sans-serif;">IQ</span>
-      <span style="background:rgba(248,113,113,0.1); color:#f87171; padding:4px 10px; border-radius:20px; font-size:0.65rem; font-family:'Inter',sans-serif;">Password: Ashiq Hussain 512</span>
     </div>
     
     <!-- View Button -->
@@ -6887,9 +6886,51 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </section>
-<!-- ============================================================
-     LUXURY DIGITAL ID CARD (Standalone - No Background Section)
-     Copy this entire block where you want the card to appear
+
+
+
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+        <div class="section-divider"></div>
+        <div class="container reveal">
+            <div class="section-header">
+                <span class="section-label">Contact</span>
+                <h2 class="section-title">Get In Touch</h2>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkRed 2s ease-in-out infinite;margin-bottom:8px;">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" style="width:24px;height:24px;">
+</span><box-></div><strong>Email</strong><br><a href="mailto:ashiqhussain97.kh@gmail.com">ashiqhussain97.kh@gmail.com</a></div>
+                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:#25D366;display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkWhatsApp 2s ease-in-out infinite;margin-bottom:8px;">
+    <i class="fab fa-whatsapp" style="color:#fff;font-size:1.1rem;"></i>
+</span>
+</span></div><strong>Phone</strong><br><span>+92 328 0802773</span></div>
+                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:#0077B5;display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkBlue 2s ease-in-out infinite;margin-bottom:8px;">
+    <i class="fab fa-linkedin-in" style="color:#fff;font-size:1rem;"></i>
+</span>
+                </div><strong>LinkedIn</strong><br><a href="https://www.linkedin.com/in/ashiq-hussain97/" target="_blank">ashiq-hussain97</a></div>
+                <div class="contact-card card"><div class="contact-icon"><span style="width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#24292e,#000);border:2px solid #fff;display:inline-flex;align-items:center;justify-content:center;animation:githubPulse 2s infinite;">
+    <i class="fab fa-github" style="color:#fff;font-size:1.1rem;"></i>
+</span>
+
+<style>
+@keyframes githubPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+    50% { box-shadow: 0 0 50px rgba(255,255,255,0.7); }
+}
+</style></div><strong>GitHub</strong><br><a href="https://github.com/ashiqhussain-97" target="_blank">ashiqhussain-97</a></div>
+                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,68,68,0.1));border:2px solid rgba(255,107,53,0.5);display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkOrange 2s ease-in-out infinite;margin-bottom:8px;">
+    <i class="fas fa-map-marker-alt" style="color:#ff6b35;font-size:0.9rem;text-shadow:0 0 15px #ff6b35;"></i>
+</span>
+</span></div><strong>Location</strong><br><span>Punjab, Pakistan</span></div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+     LUXURY DIGITAL ID CARD - FIXED (QR + DOWNLOAD WORKING)
 ============================================================ -->
 <div class="luxury-id-card-container" id="luxuryIdContainer">
 
@@ -6995,7 +7036,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </div>
 
-<!-- ========== CARD CSS (no background, scoped) ========== -->
+<!-- Load libraries (if not already loaded) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <style>
   .luxury-id-card-container {
     --gold: #d6b45a;
@@ -7003,7 +7047,7 @@ document.addEventListener('DOMContentLoaded', function() {
     --gold-dark: #9b792d;
     width: 100%;
     max-width: 680px;
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 0;
     background: transparent;
     position: relative;
@@ -7084,7 +7128,7 @@ document.addEventListener('DOMContentLoaded', function() {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 20px 12px;
+    padding: 18px 10px;
     background: radial-gradient(circle at 50% 25%, rgba(214,180,90,0.05), transparent 42%), linear-gradient(180deg, #060606, #0b0b0b);
     position: relative;
   }
@@ -7093,20 +7137,20 @@ document.addEventListener('DOMContentLoaded', function() {
     position: absolute;
     right: 6px;
     bottom: 4px;
-    font-size: 55px;
+    font-size: 50px;
     color: rgba(214,180,90,0.025);
     pointer-events: none;
   }
 
   .luxury-id-card-container .photo-frame {
-    width: 90px;
-    height: 90px;
+    width: 85px;
+    height: 85px;
     border-radius: 50%;
     padding: 3px;
     background: linear-gradient(135deg, var(--gold-light), var(--gold-dark), var(--gold-light));
     box-shadow: 0 0 0 6px rgba(214,180,90,0.025), 0 0 30px rgba(214,180,90,0.12);
     position: relative;
-    margin-bottom: 8px;
+    margin-bottom: 7px;
     z-index: 2;
   }
 
@@ -7133,16 +7177,16 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   .luxury-id-card-container .name-title-left h2 {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 400;
-    letter-spacing: 1.4px;
+    letter-spacing: 1.2px;
     color: #fff;
     line-height: 1.2;
     margin-bottom: 3px;
   }
 
   .luxury-id-card-container .role-left {
-    font-size: 7px;
+    font-size: 6.5px;
     color: #8f8f8f;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -7151,9 +7195,9 @@ document.addEventListener('DOMContentLoaded', function() {
   .luxury-id-card-container .role-left i { color: var(--gold); font-size: 3px; margin: 0 4px; }
 
   .luxury-id-card-container .divider-line {
-    width: 36px;
+    width: 32px;
     height: 1px;
-    margin: 7px auto 8px;
+    margin: 6px auto 7px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     opacity: 0.7;
   }
@@ -7167,14 +7211,17 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   .luxury-id-card-container #qrCodeContainer {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .luxury-id-card-container #qrCodeContainer canvas,
   .luxury-id-card-container #qrCodeContainer img {
-    width: 100% !important;
-    height: 100% !important;
+    width: 48px !important;
+    height: 48px !important;
     display: block;
     border-radius: 4px;
   }
@@ -7182,7 +7229,7 @@ document.addEventListener('DOMContentLoaded', function() {
   .luxury-id-card-container .qr-left-label {
     margin-top: 4px;
     color: #777;
-    font-size: 6px;
+    font-size: 5.5px;
     letter-spacing: 0.8px;
     text-transform: uppercase;
   }
@@ -7190,13 +7237,13 @@ document.addEventListener('DOMContentLoaded', function() {
   .luxury-id-card-container .qr-left-label i { color: var(--gold); margin-right: 3px; }
 
   .luxury-id-card-container .it-badge {
-    margin-top: 7px;
-    padding: 3px 8px;
+    margin-top: 6px;
+    padding: 3px 7px;
     border-radius: 30px;
     border: 1px solid rgba(214,180,90,0.16);
     background: rgba(214,180,90,0.035);
     color: var(--gold);
-    font-size: 6px;
+    font-size: 5.5px;
     letter-spacing: 1px;
     text-transform: uppercase;
     z-index: 2;
@@ -7204,7 +7251,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   .luxury-id-card-container .panel-right {
     width: 68%;
-    padding: 20px 22px 14px 21px;
+    padding: 18px 20px 12px 19px;
     background: radial-gradient(circle at 90% 10%, rgba(214,180,90,0.035), transparent 35%), linear-gradient(135deg, #151515, #111);
     display: flex;
     flex-direction: column;
@@ -7229,37 +7276,37 @@ document.addEventListener('DOMContentLoaded', function() {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: 6px;
+    margin-bottom: 3px;
   }
 
   .luxury-id-card-container .name-right h1 {
-    font-size: 23px;
+    font-size: 21px;
     font-weight: 350;
     color: white;
-    letter-spacing: 1.8px;
+    letter-spacing: 1.6px;
     line-height: 1;
   }
 
   .luxury-id-card-container .title-tag {
     flex-shrink: 0;
-    padding: 3px 8px;
+    padding: 3px 7px;
     border-radius: 30px;
     border: 1px solid rgba(214,180,90,0.18);
     background: rgba(214,180,90,0.035);
     color: var(--gold-light);
-    font-size: 6px;
-    letter-spacing: 1px;
+    font-size: 5.5px;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
   }
 
   .luxury-id-card-container .section-title {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     color: var(--gold);
-    font-size: 6px;
-    letter-spacing: 2px;
+    font-size: 5.5px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     padding-bottom: 3px;
     margin-top: 2px;
@@ -7270,19 +7317,19 @@ document.addEventListener('DOMContentLoaded', function() {
   .luxury-id-card-container .expertise-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
-    margin: 5px 0 6px;
+    gap: 3px;
+    margin: 4px 0 5px;
   }
 
   .luxury-id-card-container .expertise-grid span {
     display: inline-flex;
     align-items: center;
-    padding: 3px 8px;
+    padding: 3px 7px;
     border-radius: 30px;
     border: 1px solid rgba(255,255,255,0.045);
     background: linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.008));
     color: #b9b9b9;
-    font-size: 8px;
+    font-size: 7.5px;
     letter-spacing: 0.3px;
     transition: transform 0.25s, border-color 0.25s, color 0.25s;
   }
@@ -7293,20 +7340,20 @@ document.addEventListener('DOMContentLoaded', function() {
     border-color: rgba(214,180,90,0.28);
   }
 
-  .luxury-id-card-container .expertise-grid i { color: var(--gold); margin-right: 4px; font-size: 7px; }
+  .luxury-id-card-container .expertise-grid i { color: var(--gold); margin-right: 3px; font-size: 6.5px; }
 
   .luxury-id-card-container .contact-list {
     display: flex;
     flex-direction: column;
     gap: 1px;
-    margin-top: 3px;
+    margin-top: 2px;
   }
 
   .luxury-id-card-container .contact-item {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 3px 4px;
+    gap: 5px;
+    padding: 2px 3px;
     border-radius: 5px;
     transition: background 0.2s;
   }
@@ -7314,11 +7361,11 @@ document.addEventListener('DOMContentLoaded', function() {
   .luxury-id-card-container .contact-item:hover { background: rgba(255,255,255,0.015); }
 
   .luxury-id-card-container .contact-item > i {
-    width: 14px;
+    width: 13px;
     flex-shrink: 0;
     color: var(--gold);
     text-align: center;
-    font-size: 9px;
+    font-size: 8px;
     opacity: 0.65;
   }
 
@@ -7329,7 +7376,7 @@ document.addEventListener('DOMContentLoaded', function() {
     white-space: nowrap;
     color: #a8a8a8;
     text-decoration: none;
-    font-size: 9px;
+    font-size: 8px;
     letter-spacing: 0.3px;
   }
 
@@ -7337,12 +7384,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   .luxury-id-card-container .type {
     margin-left: auto;
-    padding: 1px 5px;
+    padding: 1px 4px;
     border-radius: 20px;
     border: 1px solid rgba(255,255,255,0.035);
     color: #5e5e5e;
-    font-size: 5px;
-    letter-spacing: 0.8px;
+    font-size: 4.5px;
+    letter-spacing: 0.7px;
     text-transform: uppercase;
   }
 
@@ -7350,32 +7397,32 @@ document.addEventListener('DOMContentLoaded', function() {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding-top: 5px;
-    margin-top: 3px;
+    padding-top: 4px;
+    margin-top: 2px;
     border-top: 1px solid rgba(255,255,255,0.035);
   }
 
-  .luxury-id-card-container .location-disclaimer { display: flex; align-items: center; gap: 6px; }
+  .luxury-id-card-container .location-disclaimer { display: flex; align-items: center; gap: 5px; }
 
-  .luxury-id-card-container .location-tag { color: #8d8d8d; font-size: 7px; white-space: nowrap; }
-  .luxury-id-card-container .location-tag i { color: var(--gold); margin-right: 3px; opacity: 0.65; }
+  .luxury-id-card-container .location-tag { color: #8d8d8d; font-size: 6.5px; white-space: nowrap; }
+  .luxury-id-card-container .location-tag i { color: var(--gold); margin-right: 2px; opacity: 0.65; }
 
   .luxury-id-card-container .disclaimer-text {
-    padding: 2px 6px;
+    padding: 1px 5px;
     border-radius: 20px;
     background: rgba(255,255,255,0.015);
     border: 1px solid rgba(255,255,255,0.025);
     color: #575757;
-    font-size: 5px;
-    letter-spacing: 0.8px;
+    font-size: 4.5px;
+    letter-spacing: 0.7px;
     text-transform: uppercase;
     white-space: nowrap;
   }
 
-  .luxury-id-card-container .disclaimer-text i { color: var(--gold); margin-right: 3px; opacity: 0.5; }
+  .luxury-id-card-container .disclaimer-text i { color: var(--gold); margin-right: 2px; opacity: 0.5; }
 
   .luxury-id-card-container .download-section {
-    margin-top: 20px;
+    margin-top: 15px;
     display: flex;
     justify-content: center;
   }
@@ -7384,17 +7431,17 @@ document.addEventListener('DOMContentLoaded', function() {
     position: relative;
     overflow: hidden;
     border: 1px solid rgba(243,215,125,0.5);
-    padding: 10px 25px;
+    padding: 10px 22px;
     border-radius: 50px;
     background: linear-gradient(135deg, #e2c264, #b9933f);
     color: #080808;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.5px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
     box-shadow: 0 8px 25px rgba(214,180,90,0.14);
     transition: transform 0.25s, box-shadow 0.25s;
   }
@@ -7433,29 +7480,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
   .luxury-id-card-container .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-  /* Mobile responsive */
   @media (max-width: 600px) {
     .luxury-id-card-container .card-wrapper { aspect-ratio: 1.8/1; }
-    .luxury-id-card-container .panel-left { width: 30%; padding: 10px 5px; }
-    .luxury-id-card-container .panel-right { width: 70%; padding: 10px 8px 8px 10px; }
-    .luxury-id-card-container .photo-frame { width: 58px; height: 58px; margin-bottom: 5px; }
-    .luxury-id-card-container .name-title-left h2 { font-size: 10px; }
-    .luxury-id-card-container .role-left { font-size: 4.5px; }
-    .luxury-id-card-container .divider-line { width: 20px; margin: 3px auto; }
-    .luxury-id-card-container #qrCodeContainer { width: 34px; height: 34px; }
-    .luxury-id-card-container .qr-left-label { font-size: 4px; }
-    .luxury-id-card-container .it-badge { font-size: 4px; padding: 2px 4px; }
-    .luxury-id-card-container .name-right h1 { font-size: 13px; }
-    .luxury-id-card-container .title-tag { font-size: 4.5px; }
-    .luxury-id-card-container .section-title { font-size: 4.5px; }
-    .luxury-id-card-container .expertise-grid span { font-size: 5px; padding: 2px 3px; }
-    .luxury-id-card-container .contact-item a { font-size: 5.5px; }
+    .luxury-id-card-container .panel-left { width: 30%; padding: 8px 4px; }
+    .luxury-id-card-container .panel-right { width: 70%; padding: 8px 6px 6px 8px; }
+    .luxury-id-card-container .photo-frame { width: 55px; height: 55px; margin-bottom: 4px; }
+    .luxury-id-card-container .name-title-left h2 { font-size: 9px; }
+    .luxury-id-card-container .role-left { font-size: 4px; }
+    .luxury-id-card-container .divider-line { width: 18px; margin: 3px auto; }
+    .luxury-id-card-container #qrCodeContainer { width: 32px; height: 32px; }
+    .luxury-id-card-container #qrCodeContainer canvas,
+    .luxury-id-card-container #qrCodeContainer img { width: 32px !important; height: 32px !important; }
+    .luxury-id-card-container .qr-left-label { font-size: 3.5px; }
+    .luxury-id-card-container .it-badge { font-size: 3.5px; padding: 2px 3px; }
+    .luxury-id-card-container .name-right h1 { font-size: 12px; }
+    .luxury-id-card-container .title-tag { font-size: 4px; }
+    .luxury-id-card-container .section-title { font-size: 4px; }
+    .luxury-id-card-container .expertise-grid span { font-size: 4.5px; padding: 2px 3px; }
+    .luxury-id-card-container .contact-item a { font-size: 5px; }
     .luxury-id-card-container .type { display: none; }
-    .luxury-id-card-container .location-tag { font-size: 4.5px; }
-    .luxury-id-card-container .disclaimer-text { font-size: 3.5px; }
+    .luxury-id-card-container .location-tag { font-size: 4px; }
+    .luxury-id-card-container .disclaimer-text { font-size: 3px; }
   }
 
-  /* Export mode */
   .export-mode *, .export-mode *::before, .export-mode *::after {
     animation: none !important;
     transition: none !important;
@@ -7468,176 +7515,159 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
   (function() {
-    const container = document.getElementById('luxuryIdContainer');
-    if (!container) return;
+    function initLuxuryCard() {
+      const container = document.getElementById('luxuryIdContainer');
+      if (!container) return;
 
-    const qrContainer = container.querySelector('#qrCodeContainer');
-    const downloadBtn = container.querySelector('#downloadBtn');
-    const cardElement = container.querySelector('#cardToDownload');
-    const cardWrapper = container.querySelector('#cardWrapper');
-    const photoElement = container.querySelector('#profilePhoto');
-    const toast = container.querySelector('#toast');
-    const toastText = container.querySelector('#toastText');
+      const qrContainer = container.querySelector('#qrCodeContainer');
+      const downloadBtn = container.querySelector('#downloadBtn');
+      const cardElement = container.querySelector('#cardToDownload');
+      const cardWrapper = container.querySelector('#cardWrapper');
+      const photoElement = container.querySelector('#profilePhoto');
+      const toast = container.querySelector('#toast');
+      const toastText = container.querySelector('#toastText');
 
-    const PORTFOLIO_URL = "https://ashiqhussain-97.github.io/portfolio/";
-    const PHOTO_URL = "https://raw.githubusercontent.com/ashiqhussain-97/portfolio/main/Copilot_20260817_103714.png";
+      const PORTFOLIO_URL = "https://ashiqhussain-97.github.io/portfolio/";
+      const PHOTO_URL = "https://raw.githubusercontent.com/ashiqhussain-97/portfolio/main/Copilot_20260817_103714.png";
 
-    function showToast(message) {
-      toastText.textContent = message;
-      toast.classList.add('show');
-      clearTimeout(window.luxuryToastTimer);
-      window.luxuryToastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
-    }
+      function showToast(message) {
+        toastText.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(window.luxuryToastTimer);
+        window.luxuryToastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+      }
 
-    function generateQR() {
-      if (qrContainer) {
-        qrContainer.innerHTML = '';
-        new QRCode(qrContainer, {
-          text: PORTFOLIO_URL,
-          width: 50,
-          height: 50,
-          colorDark: "#d6b45a",
-          colorLight: "#050505",
-          correctLevel: QRCode.CorrectLevel.H
+      // Generate QR code
+      function generateQR() {
+        if (qrContainer && typeof QRCode !== 'undefined') {
+          qrContainer.innerHTML = '';
+          try {
+            new QRCode(qrContainer, {
+              text: PORTFOLIO_URL,
+              width: 48,
+              height: 48,
+              colorDark: "#d6b45a",
+              colorLight: "#050505",
+              correctLevel: QRCode.CorrectLevel.H
+            });
+            console.log('QR code generated successfully');
+          } catch(e) {
+            console.error('QR generation error:', e);
+          }
+        } else {
+          console.warn('QRCode library not loaded');
+          setTimeout(generateQR, 500);
+        }
+      }
+
+      // Generate QR immediately
+      generateQR();
+
+      // Download functionality
+      if (downloadBtn) {
+        downloadBtn.addEventListener('click', async () => {
+          const originalHTML = downloadBtn.innerHTML;
+          downloadBtn.disabled = true;
+          downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Rendering...';
+
+          try {
+            let originalPhoto = photoElement.style.backgroundImage;
+            
+            // Preload image
+            try {
+              const img = new Image();
+              img.crossOrigin = 'anonymous';
+              await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+                img.src = PHOTO_URL;
+              });
+              const canvas = document.createElement('canvas');
+              canvas.width = img.naturalWidth;
+              canvas.height = img.naturalHeight;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0);
+              const base64 = canvas.toDataURL('image/png');
+              photoElement.style.backgroundImage = `url("${base64}")`;
+            } catch (e) {
+              console.warn('photo preload failed, using original', e);
+            }
+
+            container.classList.add('export-mode');
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+            const canvas = await html2canvas(cardElement, {
+              scale: Math.min(window.devicePixelRatio * 2, 4),
+              backgroundColor: '#090909',
+              useCORS: true,
+              allowTaint: false,
+              logging: false,
+              imageTimeout: 15000,
+              removeContainer: true
+            });
+
+            const link = document.createElement('a');
+            link.download = 'Ashiq_Hussain_Luxury_Digital_ID.png';
+            link.href = canvas.toDataURL('image/png', 1.0);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            photoElement.style.backgroundImage = originalPhoto;
+            container.classList.remove('export-mode');
+            downloadBtn.innerHTML = originalHTML;
+            downloadBtn.disabled = false;
+            showToast('Luxury Digital ID exported successfully!');
+            console.log('Download successful');
+          } catch (error) {
+            console.error('Export error:', error);
+            container.classList.remove('export-mode');
+            downloadBtn.innerHTML = originalHTML;
+            downloadBtn.disabled = false;
+            showToast('Export failed. Please try again.');
+          }
+        });
+      }
+
+      // Parallax effect
+      if (cardWrapper) {
+        cardWrapper.addEventListener('mousemove', (e) => {
+          if (window.innerWidth <= 600) return;
+          const rect = cardWrapper.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const rotateY = ((x / rect.width) - 0.5) * 4;
+          const rotateX = ((y / rect.height) - 0.5) * -4;
+          cardWrapper.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+        });
+        cardWrapper.addEventListener('mouseleave', () => {
+          cardWrapper.style.transform = '';
+        });
+      }
+
+      // Email copy
+      const emailLink = container.querySelector('a[href^="mailto:"]');
+      if (emailLink) {
+        emailLink.addEventListener('contextmenu', async (e) => {
+          e.preventDefault();
+          try {
+            await navigator.clipboard.writeText('ashiqhussain97.kh@gmail.com');
+            showToast('Email copied.');
+          } catch (err) {
+            console.warn('clipboard not available');
+          }
         });
       }
     }
 
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      generateQR();
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLuxuryCard);
     } else {
-      window.addEventListener('DOMContentLoaded', generateQR);
-    }
-
-    if (downloadBtn) {
-      downloadBtn.addEventListener('click', async () => {
-        const originalHTML = downloadBtn.innerHTML;
-        downloadBtn.disabled = true;
-        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Rendering...';
-
-        try {
-          let originalPhoto = photoElement.style.backgroundImage;
-          try {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            await new Promise((resolve, reject) => {
-              img.onload = resolve;
-              img.onerror = reject;
-              img.src = PHOTO_URL;
-            });
-            const canvas = document.createElement('canvas');
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            const base64 = canvas.toDataURL('image/png');
-            photoElement.style.backgroundImage = `url("${base64}")`;
-          } catch (e) {
-            console.warn('photo preload failed', e);
-          }
-
-          container.classList.add('export-mode');
-          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
-          const canvas = await html2canvas(cardElement, {
-            scale: Math.min(window.devicePixelRatio * 2, 4),
-            backgroundColor: '#090909',
-            useCORS: true,
-            allowTaint: false,
-            logging: false,
-            imageTimeout: 15000,
-            removeContainer: true
-          });
-
-          const link = document.createElement('a');
-          link.download = 'Ashiq_Hussain_Luxury_Digital_ID.png';
-          link.href = canvas.toDataURL('image/png', 1.0);
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-
-          photoElement.style.backgroundImage = originalPhoto;
-          container.classList.remove('export-mode');
-          downloadBtn.innerHTML = originalHTML;
-          downloadBtn.disabled = false;
-          showToast('Luxury Digital ID exported successfully.');
-        } catch (error) {
-          console.error('Export error:', error);
-          container.classList.remove('export-mode');
-          downloadBtn.innerHTML = originalHTML;
-          downloadBtn.disabled = false;
-          showToast('Export failed. Try saving manually.');
-        }
-      });
-    }
-
-    if (cardWrapper) {
-      cardWrapper.addEventListener('mousemove', (e) => {
-        if (window.innerWidth <= 600) return;
-        const rect = cardWrapper.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const rotateY = ((x / rect.width) - 0.5) * 4;
-        const rotateX = ((y / rect.height) - 0.5) * -4;
-        cardWrapper.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
-      });
-      cardWrapper.addEventListener('mouseleave', () => {
-        cardWrapper.style.transform = '';
-      });
-    }
-
-    const emailLink = container.querySelector('a[href^="mailto:"]');
-    if (emailLink) {
-      emailLink.addEventListener('contextmenu', async (e) => {
-        e.preventDefault();
-        try {
-          await navigator.clipboard.writeText('ashiqhussain97.kh@gmail.com');
-          showToast('Email copied.');
-        } catch (err) {
-          console.warn('clipboard not available');
-        }
-      });
+      initLuxuryCard();
     }
   })();
 </script>
-    <!-- CONTACT -->
-    <section id="contact" class="section">
-        <div class="section-divider"></div>
-        <div class="container reveal">
-            <div class="section-header">
-                <span class="section-label">Contact</span>
-                <h2 class="section-title">Get In Touch</h2>
-            </div>
-            <div class="contact-grid">
-                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkRed 2s ease-in-out infinite;margin-bottom:8px;">
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" style="width:24px;height:24px;">
-</span><box-></div><strong>Email</strong><br><a href="mailto:ashiqhussain97.kh@gmail.com">ashiqhussain97.kh@gmail.com</a></div>
-                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:#25D366;display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkWhatsApp 2s ease-in-out infinite;margin-bottom:8px;">
-    <i class="fab fa-whatsapp" style="color:#fff;font-size:1.1rem;"></i>
-</span>
-</span></div><strong>Phone</strong><br><span>+92 328 0802773</span></div>
-                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:#0077B5;display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkBlue 2s ease-in-out infinite;margin-bottom:8px;">
-    <i class="fab fa-linkedin-in" style="color:#fff;font-size:1rem;"></i>
-</span>
-                </div><strong>LinkedIn</strong><br><a href="https://www.linkedin.com/in/ashiq-hussain97/" target="_blank">ashiq-hussain97</a></div>
-                <div class="contact-card card"><div class="contact-icon"><span style="width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#24292e,#000);border:2px solid #fff;display:inline-flex;align-items:center;justify-content:center;animation:githubPulse 2s infinite;">
-    <i class="fab fa-github" style="color:#fff;font-size:1.1rem;"></i>
-</span>
-
-<style>
-@keyframes githubPulse {
-    0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
-    50% { box-shadow: 0 0 50px rgba(255,255,255,0.7); }
-}
-</style></div><strong>GitHub</strong><br><a href="https://github.com/ashiqhussain-97" target="_blank">ashiqhussain-97</a></div>
-                <div class="contact-card card"><div class="contact-icon"><span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,68,68,0.1));border:2px solid rgba(255,107,53,0.5);display:inline-flex;align-items:center;justify-content:center;animation:neonBlinkOrange 2s ease-in-out infinite;margin-bottom:8px;">
-    <i class="fas fa-map-marker-alt" style="color:#ff6b35;font-size:0.9rem;text-shadow:0 0 15px #ff6b35;"></i>
-</span>
-</span></div><strong>Location</strong><br><span>Punjab, Pakistan</span></div>
-            </div>
-        </div>
-    </section>
-
     <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
