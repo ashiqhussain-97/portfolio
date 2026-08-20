@@ -6887,7 +6887,719 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </section>
+<!-- ============================================================
+     LUXURY DIGITAL ID CARD (Standalone - No Background Section)
+     Copy this entire block where you want the card to appear
+============================================================ -->
+<div class="luxury-id-card-container" id="luxuryIdContainer">
 
+  <!-- Card Wrapper -->
+  <div class="card-wrapper" id="cardWrapper">
+    <div class="profile-card" id="cardToDownload">
+
+      <!-- LEFT PANEL -->
+      <div class="panel-left">
+        <div class="bg-icon"><i class="fab fa-python"></i></div>
+
+        <div class="photo-frame">
+          <div class="photo-frame-inner" id="profilePhoto"></div>
+        </div>
+
+        <div class="name-title-left">
+          <h2>Ashiq Hussain</h2>
+          <div class="role-left">
+            <i class="fas fa-circle"></i> Aspiring Developer <i class="fas fa-circle"></i>
+          </div>
+        </div>
+
+        <div class="divider-line"></div>
+
+        <div class="qr-left-section">
+          <div class="qr-left-box">
+            <div id="qrCodeContainer"></div>
+          </div>
+          <div class="qr-left-label">
+            <i class="fas fa-qrcode"></i> Scan Portfolio
+          </div>
+        </div>
+
+        <div class="it-badge">
+          <i class="fas fa-code"></i> Entry-Level IT Professional
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="panel-right">
+        <div class="name-right">
+          <h1>Ashiq Hussain</h1>
+          <span class="title-tag"><i class="fas fa-asterisk"></i> Entry Level</span>
+        </div>
+
+        <div class="section-title">
+          <i class="fas fa-layer-group"></i> Skills
+        </div>
+        <div class="expertise-grid">
+          <span><i class="fab fa-python"></i> Python</span>
+          <span><i class="fas fa-laptop-code"></i> IT</span>
+          <span><i class="fas fa-brain"></i> Problem Solving</span>
+          <span><i class="fas fa-language"></i> German B1</span>
+        </div>
+
+        <div class="section-title">
+          <i class="fas fa-address-card"></i> Connect
+        </div>
+        <div class="contact-list">
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <a href="mailto:ashiqhussain97.kh@gmail.com">ashiqhussain97.kh@gmail.com</a>
+            <span class="type">Email</span>
+          </div>
+          <div class="contact-item">
+            <i class="fab fa-github"></i>
+            <a href="https://github.com/ashiqhussain-97" target="_blank">ashiqhussain-97</a>
+            <span class="type">Git</span>
+          </div>
+          <div class="contact-item">
+            <i class="fab fa-linkedin-in"></i>
+            <a href="https://linkedin.com/in/ashiq-hussain97" target="_blank">ashq-hussain97</a>
+            <span class="type">In</span>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-globe"></i>
+            <a href="https://ashiqhussain-97.github.io/portfolio/" target="_blank">ashiqhussain-97.github.io/portfolio</a>
+            <span class="type">Web</span>
+          </div>
+        </div>
+
+        <div class="bottom-row">
+          <div class="location-disclaimer">
+            <span class="location-tag"><i class="fas fa-location-dot"></i> Sargodha, Punjab, Pakistan</span>
+            <span class="disclaimer-text"><i class="fas fa-shield-halved"></i> Digital ID</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Button -->
+  <div class="download-section">
+    <button class="btn-download" id="downloadBtn" type="button">
+      <i class="fas fa-download"></i> Download Card PNG
+    </button>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-check"></i> <span id="toastText">Done</span>
+  </div>
+
+</div>
+
+<!-- ========== CARD CSS (no background, scoped) ========== -->
+<style>
+  .luxury-id-card-container {
+    --gold: #d6b45a;
+    --gold-light: #f3d77d;
+    --gold-dark: #9b792d;
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0;
+    background: transparent;
+    position: relative;
+    z-index: 1;
+    font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #fff;
+  }
+
+  .luxury-id-card-container * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .luxury-id-card-container .card-wrapper {
+    width: 100%;
+    aspect-ratio: 2.15 / 1;
+    padding: 1px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(243,215,125,0.5), rgba(214,180,90,0.08) 35%, rgba(255,255,255,0.03) 55%, rgba(214,180,90,0.28));
+    box-shadow: 0 20px 45px rgba(0,0,0,0.6), 0 0 30px rgba(214,180,90,0.08);
+    position: relative;
+    isolation: isolate;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .luxury-id-card-container .card-wrapper:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 45px rgba(214,180,90,0.15);
+  }
+
+  .luxury-id-card-container .card-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 24px;
+    background: conic-gradient(from 0deg, transparent, rgba(243,215,125,0.6), transparent 20%, transparent 50%, rgba(243,215,125,0.3), transparent 70%);
+    z-index: -1;
+    animation: rotateLuxuryBorder 7s linear infinite;
+    filter: blur(3px);
+    opacity: 0.55;
+  }
+
+  @keyframes rotateLuxuryBorder { to { transform: rotate(360deg); } }
+
+  .luxury-id-card-container .profile-card {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+    border-radius: 21px;
+    background: linear-gradient(135deg, #0a0a0a, #111 45%, #090909);
+    position: relative;
+    isolation: isolate;
+  }
+
+  .luxury-id-card-container .profile-card::before {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: -30%;
+    width: 25%;
+    height: 300%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transform: rotate(18deg);
+    animation: luxuryShine 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  @keyframes luxuryShine { 0%, 65% { left: -35%; } 100% { left: 130%; } }
+
+  .luxury-id-card-container .panel-left {
+    width: 32%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px 12px;
+    background: radial-gradient(circle at 50% 25%, rgba(214,180,90,0.05), transparent 42%), linear-gradient(180deg, #060606, #0b0b0b);
+    position: relative;
+  }
+
+  .luxury-id-card-container .bg-icon {
+    position: absolute;
+    right: 6px;
+    bottom: 4px;
+    font-size: 55px;
+    color: rgba(214,180,90,0.025);
+    pointer-events: none;
+  }
+
+  .luxury-id-card-container .photo-frame {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold-dark), var(--gold-light));
+    box-shadow: 0 0 0 6px rgba(214,180,90,0.025), 0 0 30px rgba(214,180,90,0.12);
+    position: relative;
+    margin-bottom: 8px;
+    z-index: 2;
+  }
+
+  .luxury-id-card-container .photo-frame::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 1px solid rgba(214,180,90,0.18);
+    animation: photoPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes photoPulse { 0%,100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.06); opacity: 0.7; } }
+
+  .luxury-id-card-container .photo-frame-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-image: url('https://raw.githubusercontent.com/ashiqhussain-97/portfolio/main/Copilot_20260817_103714.png');
+    background-size: cover;
+    background-position: center 20%;
+    background-color: #181818;
+    border: 2px solid #080808;
+  }
+
+  .luxury-id-card-container .name-title-left h2 {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 1.4px;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .luxury-id-card-container .role-left {
+    font-size: 7px;
+    color: #8f8f8f;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .luxury-id-card-container .role-left i { color: var(--gold); font-size: 3px; margin: 0 4px; }
+
+  .luxury-id-card-container .divider-line {
+    width: 36px;
+    height: 1px;
+    margin: 7px auto 8px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.7;
+  }
+
+  .luxury-id-card-container .qr-left-box {
+    padding: 4px;
+    background: #050505;
+    border-radius: 7px;
+    border: 1px solid rgba(214,180,90,0.2);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  }
+
+  .luxury-id-card-container #qrCodeContainer {
+    width: 50px;
+    height: 50px;
+  }
+
+  .luxury-id-card-container #qrCodeContainer canvas,
+  .luxury-id-card-container #qrCodeContainer img {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .luxury-id-card-container .qr-left-label {
+    margin-top: 4px;
+    color: #777;
+    font-size: 6px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  .luxury-id-card-container .qr-left-label i { color: var(--gold); margin-right: 3px; }
+
+  .luxury-id-card-container .it-badge {
+    margin-top: 7px;
+    padding: 3px 8px;
+    border-radius: 30px;
+    border: 1px solid rgba(214,180,90,0.16);
+    background: rgba(214,180,90,0.035);
+    color: var(--gold);
+    font-size: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+
+  .luxury-id-card-container .panel-right {
+    width: 68%;
+    padding: 20px 22px 14px 21px;
+    background: radial-gradient(circle at 90% 10%, rgba(214,180,90,0.035), transparent 35%), linear-gradient(135deg, #151515, #111);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+  }
+
+  .luxury-id-card-container .profile-card::after {
+    content: "";
+    position: absolute;
+    top: 12%;
+    left: 32%;
+    width: 1px;
+    height: 76%;
+    background: linear-gradient(to bottom, transparent, rgba(214,180,90,0.42), rgba(214,180,90,0.1), transparent);
+    box-shadow: 0 0 8px rgba(214,180,90,0.12);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .luxury-id-card-container .name-right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .luxury-id-card-container .name-right h1 {
+    font-size: 23px;
+    font-weight: 350;
+    color: white;
+    letter-spacing: 1.8px;
+    line-height: 1;
+  }
+
+  .luxury-id-card-container .title-tag {
+    flex-shrink: 0;
+    padding: 3px 8px;
+    border-radius: 30px;
+    border: 1px solid rgba(214,180,90,0.18);
+    background: rgba(214,180,90,0.035);
+    color: var(--gold-light);
+    font-size: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .luxury-id-card-container .section-title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--gold);
+    font-size: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding-bottom: 3px;
+    margin-top: 2px;
+    border-bottom: 1px solid rgba(214,180,90,0.07);
+    opacity: 0.8;
+  }
+
+  .luxury-id-card-container .expertise-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 5px 0 6px;
+  }
+
+  .luxury-id-card-container .expertise-grid span {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 30px;
+    border: 1px solid rgba(255,255,255,0.045);
+    background: linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.008));
+    color: #b9b9b9;
+    font-size: 8px;
+    letter-spacing: 0.3px;
+    transition: transform 0.25s, border-color 0.25s, color 0.25s;
+  }
+
+  .luxury-id-card-container .expertise-grid span:hover {
+    transform: translateY(-1px);
+    color: #fff;
+    border-color: rgba(214,180,90,0.28);
+  }
+
+  .luxury-id-card-container .expertise-grid i { color: var(--gold); margin-right: 4px; font-size: 7px; }
+
+  .luxury-id-card-container .contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-top: 3px;
+  }
+
+  .luxury-id-card-container .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 4px;
+    border-radius: 5px;
+    transition: background 0.2s;
+  }
+
+  .luxury-id-card-container .contact-item:hover { background: rgba(255,255,255,0.015); }
+
+  .luxury-id-card-container .contact-item > i {
+    width: 14px;
+    flex-shrink: 0;
+    color: var(--gold);
+    text-align: center;
+    font-size: 9px;
+    opacity: 0.65;
+  }
+
+  .luxury-id-card-container .contact-item a {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #a8a8a8;
+    text-decoration: none;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+  }
+
+  .luxury-id-card-container .contact-item a:hover { color: #fff; }
+
+  .luxury-id-card-container .type {
+    margin-left: auto;
+    padding: 1px 5px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.035);
+    color: #5e5e5e;
+    font-size: 5px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  .luxury-id-card-container .bottom-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 5px;
+    margin-top: 3px;
+    border-top: 1px solid rgba(255,255,255,0.035);
+  }
+
+  .luxury-id-card-container .location-disclaimer { display: flex; align-items: center; gap: 6px; }
+
+  .luxury-id-card-container .location-tag { color: #8d8d8d; font-size: 7px; white-space: nowrap; }
+  .luxury-id-card-container .location-tag i { color: var(--gold); margin-right: 3px; opacity: 0.65; }
+
+  .luxury-id-card-container .disclaimer-text {
+    padding: 2px 6px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(255,255,255,0.025);
+    color: #575757;
+    font-size: 5px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .luxury-id-card-container .disclaimer-text i { color: var(--gold); margin-right: 3px; opacity: 0.5; }
+
+  .luxury-id-card-container .download-section {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .luxury-id-card-container .btn-download {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(243,215,125,0.5);
+    padding: 10px 25px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #e2c264, #b9933f);
+    color: #080808;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 8px 25px rgba(214,180,90,0.14);
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .luxury-id-card-container .btn-download::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -120%;
+    width: 80%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s;
+  }
+
+  .luxury-id-card-container .btn-download:hover::before { left: 140%; }
+  .luxury-id-card-container .btn-download:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(214,180,90,0.22); }
+  .luxury-id-card-container .btn-download:disabled { cursor: wait; opacity: 0.7; }
+
+  .luxury-id-card-container .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 25px;
+    transform: translate(-50%, 30px);
+    opacity: 0;
+    pointer-events: none;
+    padding: 8px 15px;
+    border-radius: 40px;
+    background: rgba(15,15,15,0.94);
+    border: 1px solid rgba(214,180,90,0.25);
+    color: #ddd;
+    font-size: 11px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 1000;
+  }
+
+  .luxury-id-card-container .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* Mobile responsive */
+  @media (max-width: 600px) {
+    .luxury-id-card-container .card-wrapper { aspect-ratio: 1.8/1; }
+    .luxury-id-card-container .panel-left { width: 30%; padding: 10px 5px; }
+    .luxury-id-card-container .panel-right { width: 70%; padding: 10px 8px 8px 10px; }
+    .luxury-id-card-container .photo-frame { width: 58px; height: 58px; margin-bottom: 5px; }
+    .luxury-id-card-container .name-title-left h2 { font-size: 10px; }
+    .luxury-id-card-container .role-left { font-size: 4.5px; }
+    .luxury-id-card-container .divider-line { width: 20px; margin: 3px auto; }
+    .luxury-id-card-container #qrCodeContainer { width: 34px; height: 34px; }
+    .luxury-id-card-container .qr-left-label { font-size: 4px; }
+    .luxury-id-card-container .it-badge { font-size: 4px; padding: 2px 4px; }
+    .luxury-id-card-container .name-right h1 { font-size: 13px; }
+    .luxury-id-card-container .title-tag { font-size: 4.5px; }
+    .luxury-id-card-container .section-title { font-size: 4.5px; }
+    .luxury-id-card-container .expertise-grid span { font-size: 5px; padding: 2px 3px; }
+    .luxury-id-card-container .contact-item a { font-size: 5.5px; }
+    .luxury-id-card-container .type { display: none; }
+    .luxury-id-card-container .location-tag { font-size: 4.5px; }
+    .luxury-id-card-container .disclaimer-text { font-size: 3.5px; }
+  }
+
+  /* Export mode */
+  .export-mode *, .export-mode *::before, .export-mode *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .export-mode .profile-card::before,
+  .export-mode .photo-frame::after {
+    display: none !important;
+  }
+</style>
+
+<script>
+  (function() {
+    const container = document.getElementById('luxuryIdContainer');
+    if (!container) return;
+
+    const qrContainer = container.querySelector('#qrCodeContainer');
+    const downloadBtn = container.querySelector('#downloadBtn');
+    const cardElement = container.querySelector('#cardToDownload');
+    const cardWrapper = container.querySelector('#cardWrapper');
+    const photoElement = container.querySelector('#profilePhoto');
+    const toast = container.querySelector('#toast');
+    const toastText = container.querySelector('#toastText');
+
+    const PORTFOLIO_URL = "https://ashiqhussain-97.github.io/portfolio/";
+    const PHOTO_URL = "https://raw.githubusercontent.com/ashiqhussain-97/portfolio/main/Copilot_20260817_103714.png";
+
+    function showToast(message) {
+      toastText.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(window.luxuryToastTimer);
+      window.luxuryToastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function generateQR() {
+      if (qrContainer) {
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, {
+          text: PORTFOLIO_URL,
+          width: 50,
+          height: 50,
+          colorDark: "#d6b45a",
+          colorLight: "#050505",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      }
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      generateQR();
+    } else {
+      window.addEventListener('DOMContentLoaded', generateQR);
+    }
+
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', async () => {
+        const originalHTML = downloadBtn.innerHTML;
+        downloadBtn.disabled = true;
+        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Rendering...';
+
+        try {
+          let originalPhoto = photoElement.style.backgroundImage;
+          try {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            await new Promise((resolve, reject) => {
+              img.onload = resolve;
+              img.onerror = reject;
+              img.src = PHOTO_URL;
+            });
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const base64 = canvas.toDataURL('image/png');
+            photoElement.style.backgroundImage = `url("${base64}")`;
+          } catch (e) {
+            console.warn('photo preload failed', e);
+          }
+
+          container.classList.add('export-mode');
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+          const canvas = await html2canvas(cardElement, {
+            scale: Math.min(window.devicePixelRatio * 2, 4),
+            backgroundColor: '#090909',
+            useCORS: true,
+            allowTaint: false,
+            logging: false,
+            imageTimeout: 15000,
+            removeContainer: true
+          });
+
+          const link = document.createElement('a');
+          link.download = 'Ashiq_Hussain_Luxury_Digital_ID.png';
+          link.href = canvas.toDataURL('image/png', 1.0);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          photoElement.style.backgroundImage = originalPhoto;
+          container.classList.remove('export-mode');
+          downloadBtn.innerHTML = originalHTML;
+          downloadBtn.disabled = false;
+          showToast('Luxury Digital ID exported successfully.');
+        } catch (error) {
+          console.error('Export error:', error);
+          container.classList.remove('export-mode');
+          downloadBtn.innerHTML = originalHTML;
+          downloadBtn.disabled = false;
+          showToast('Export failed. Try saving manually.');
+        }
+      });
+    }
+
+    if (cardWrapper) {
+      cardWrapper.addEventListener('mousemove', (e) => {
+        if (window.innerWidth <= 600) return;
+        const rect = cardWrapper.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const rotateY = ((x / rect.width) - 0.5) * 4;
+        const rotateX = ((y / rect.height) - 0.5) * -4;
+        cardWrapper.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+      });
+      cardWrapper.addEventListener('mouseleave', () => {
+        cardWrapper.style.transform = '';
+      });
+    }
+
+    const emailLink = container.querySelector('a[href^="mailto:"]');
+    if (emailLink) {
+      emailLink.addEventListener('contextmenu', async (e) => {
+        e.preventDefault();
+        try {
+          await navigator.clipboard.writeText('ashiqhussain97.kh@gmail.com');
+          showToast('Email copied.');
+        } catch (err) {
+          console.warn('clipboard not available');
+        }
+      });
+    }
+  })();
+</script>
     <!-- CONTACT -->
     <section id="contact" class="section">
         <div class="section-divider"></div>
